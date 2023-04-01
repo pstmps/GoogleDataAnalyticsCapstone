@@ -1,0 +1,302 @@
+---
+title: "Analysis of Cyclistic User Data"
+author: "Michael-Philipp Stiebing"
+date: "2023-03-21"
+output: 
+  pdf_document: 
+    latex_engine: lualatex
+    keep_tex: yes
+mainfont: Bahnschrift:style=Bold
+monofont: Bahnschrift:style=Condensed
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(readr)
+library(geosphere)
+
+setwd("/home/mikiR/remote_transfer/")
+X202110_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202110-divvy-tripdata.csv")
+X202111_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202111-divvy-tripdata.csv")
+X202112_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202112-divvy-tripdata.csv")
+X202201_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202201-divvy-tripdata.csv")
+X202202_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202202-divvy-tripdata.csv")
+X202203_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202203-divvy-tripdata.csv")
+X202204_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202204-divvy-tripdata.csv")
+X202205_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202205-divvy-tripdata.csv")
+X202206_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202206-divvy-tripdata.csv")
+X202207_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202207-divvy-tripdata.csv")
+X202208_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202208-divvy-tripdata.csv")
+X202209_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202209-divvy-tripdata.csv")
+X202210_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202210-divvy-tripdata.csv")
+
+all_trips <- bind_rows(
+                  X202110_divvy_tripdata, X202111_divvy_tripdata, X202112_divvy_tripdata, X202201_divvy_tripdata,
+                  X202202_divvy_tripdata, X202203_divvy_tripdata, X202204_divvy_tripdata, X202205_divvy_tripdata,
+                  X202206_divvy_tripdata, X202207_divvy_tripdata, X202208_divvy_tripdata, X202209_divvy_tripdata, 
+                  X202210_divvy_tripdata)
+
+climate_chicago_202110_202210 <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/climate_chicago_202110-202210.csv")
+
+```
+
+\fontsize{9}{11}
+\selectfont
+```{r include=FALSE}
+all_trips$date <- as.Date(all_trips$started_at)
+all_trips$month <- format(as.Date(all_trips$date), "%m")
+all_trips$day <- format(as.Date(all_trips$date), "%d")
+all_trips$year <- format(as.Date(all_trips$date), "%Y")
+all_trips$day_of_week <- format(as.Date(all_trips$date), "%A")
+all_trips$timeofday <- format(as.POSIXct(all_trips$started_at), format = "%H:%M:%S")
+all_trips$hours <- format(as.POSIXct(all_trips$started_at), format = "%H")
+
+all_trips$ride_length <- difftime(all_trips$ended_at,all_trips$started_at)
+all_trips$ride_length <- as.numeric(as.character(all_trips$ride_length))
+
+all_trips_v2 <- all_trips[!(all_trips$ride_length<0),]
+all_trips_errors <- all_trips[(all_trips$ride_length<0),]
+
+all_trips_v3 <- all_trips_v2 %>% 
+              mutate(geodist = distHaversine(
+                    cbind(all_trips_v2$start_lng,all_trips_v2$start_lat), 
+                    cbind(all_trips_v2$end_lng,all_trips_v2$end_lat)))
+
+all_trips_v4 <- (filter(all_trips_v3,ride_length < 86400 & ride_length > 60 & ride_length != 0 & !is.na(geodist)))
+
+all_trips_v5 <- all_trips_v4 %>% 
+  mutate(speed = geodist / ride_length) %>%
+  filter(speed < 10)
+
+climate_chicago_202110_202210$date <- as.Date(climate_chicago_202110_202210$date)
+
+```
+\fontsize{10}{12}
+\selectfont
+
+# Starting with processed dataframe all_trips_v5
+
+* Conduct descriptive analysis as per script
+
+\fontsize{9}{11}
+\selectfont
+```{r}
+
+# Set up two color palette that are compatible with all kinds of color vision, 
+# from http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/
+
+cbPaletteMin <- c("#E69F00", "#0072B2")
+
+# 2700s = 45 min 10800s = 3 hours
+
+table(all_trips_v5$member_casual)
+
+summary(all_trips_v5$ride_length)
+
+summary(all_trips_v5$geodist)
+
+# Compare members and casual users
+aggregate(all_trips_v5$ride_length ~ all_trips_v5$member_casual, FUN = mean)
+aggregate(all_trips_v5$ride_length ~ all_trips_v5$member_casual, FUN = median)
+
+# casual users seem to take longer rides
+
+
+nrow(all_trips_v5[all_trips_v5$member_casual == "casual" & all_trips_v5$ride_length > 2700,]) /
+  nrow(all_trips_v5[all_trips_v5$member_casual == "casual",])
+nrow(all_trips_v5[all_trips_v5$member_casual == "member" & all_trips_v5$ride_length > 2700,]) / 
+  nrow(all_trips_v5[all_trips_v5$member_casual == "member",])
+
+# 10 percent of casual users take rides that are longer than 45 minutes, whereas only 1.7 percent of members do
+
+nrow(filter(all_trips_v5,geodist <= 10)) / nrow(all_trips_v5)
+
+nrow(all_trips_v5[all_trips_v5$member_casual == "casual" & all_trips_v5$geodist <= 10,]) / 
+  nrow(all_trips_v5[all_trips_v5$member_casual == "casual",])
+nrow(all_trips_v5[all_trips_v5$member_casual == "member" & all_trips_v5$geodist <= 10,]) / 
+  nrow(all_trips_v5[all_trips_v5$member_casual == "member",])
+
+# 7.3 percent of casual users 'take round trips', whereas only 3.6 percent of members do
+
+# Notice that the days of the week are out of order. Let's fix that.
+all_trips_v5$day_of_week <- ordered(all_trips_v5$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday",
+                                                                       "Thursday", "Friday", "Saturday"))
+
+# Now, let's run the average ride time by each day for members vs casual users
+aggregate(all_trips_v5$ride_length ~ all_trips_v5$member_casual + all_trips_v5$day_of_week, FUN = mean)
+
+
+# analyze ridership data by type and weekday
+all_trips_v5 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>%    # creates weekday field using wday()
+  group_by(member_casual, weekday) %>%                    # groups by usertype and weekday
+  summarise(number_of_rides = n()                         # calculates the number of rides and average duration
+            ,average_duration = mean(ride_length)) %>%    # calculates the average duration
+  arrange(member_casual, weekday)                         # sorts
+
+
+# Let's visualize the number of rides by rider type
+all_trips_v5 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()/1000
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = number_of_rides, fill = member_casual)) +
+  geom_col(position = "dodge") + 
+  scale_fill_manual(values=cbPaletteMin) +
+  labs(y = "Number of rides in thousands", x = NULL, fill = NULL)
+
+# ggsave("weeklyOverview.png",width=3840,height = 2160,unit="px")
+
+# Let's visualize the number of rides by rider type for rides that begin and end within 
+# 10 meters of each other 'round trips'
+filter(all_trips_v5,geodist <= 10) %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = number_of_rides, fill = member_casual)) +
+  geom_col(position = "dodge") + 
+  scale_fill_manual(values=cbPaletteMin) +
+  labs(y = "Number of rides", x = NULL, fill = NULL)
+
+# ggsave("weeklyOverview-roundTrips.png",width=3840,height = 2160,unit="px")
+
+# Let's create a visualization for average duration
+all_trips_v5 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length / 60)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = average_duration, fill = member_casual)) +
+  geom_col(position = "dodge") + 
+  scale_fill_manual(values=cbPaletteMin) +
+  labs(y = "average trip duration in minutes", x = NULL, fill = NULL)
+
+# ggsave("weeklyOverview-duration.png",width=3840,height = 2160,unit="px")
+
+# Let's create a visualization for average duration  for rides that begin and end within 
+# 10 meters of each other 'round trips'
+filter(all_trips_v5,geodist <= 10) %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length / 60)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = average_duration, fill = member_casual)) +
+  geom_col(position = "dodge") + 
+  scale_fill_manual(values=cbPaletteMin) +
+  labs(y = "average trip duration in minutes", x = NULL, fill = NULL)
+
+```
+\fontsize{10}{12}
+\selectfont
+
+* The pattern emerging seems to be the following:
+  + Members take shorter rides
+  + Casual users take longer rides, especially on weekends
+  + Casual users take more round trips than members
+
+
+\fontsize{9}{11}
+\selectfont
+```{r}
+
+# Let's create a visualization for number of rides by User type, over the whole timeframe. 
+# Overlay average daily temperature in Fahrenheit. ( Has to be scaled to match the geom_density plot)
+all_trips_v5 %>% 
+  ggplot() +
+  geom_smooth(data = climate_chicago_202110_202210, aes(x = date, y = as.double(avgtemp) / 20000),method=loess,color="#D55E00") +
+  geom_density( aes(x = date,fill = member_casual),alpha = .3) +
+  scale_y_continuous(
+    breaks=c(seq(0.000,0.005,by=0.0005)), 
+    labels=c(seq(0,100,10)),
+    sec.axis = sec_axis(~ (((. * 20000) - 32) * 5/9), name = "Average daily temperature in °C",breaks=c(seq(-15,40,5)))
+    ) +
+  scale_x_date(date_breaks = "1 month") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.9, hjust=1)) +
+  scale_fill_manual(values=cbPaletteMin) +
+  labs(y = "Average daily temperature in °F", x = NULL, fill = NULL) 
+
+# ggsave("yearlyOverview.png",width=3840,height = 2160,unit="px")
+
+
+```
+\fontsize{10}{12}
+\selectfont
+
+* Looking at usage across the year, during the summer months, casual users overtake members
+* Usage, especially by casual users, seems to correlate with average temperature
+
+\fontsize{9}{11}
+\selectfont
+
+```{r}
+
+# Let's create a visualization for number of rides by User type, only looking at time of day
+all_trips_v5 %>% 
+  group_by(member_casual, hours) %>% 
+  summarise(number_of_rides = n()) %>% 
+  arrange(member_casual, as.numeric(hours))  %>% 
+  ggplot( aes(x = as.numeric(hours), y = number_of_rides / 1000, fill = member_casual)) +
+  geom_col(position = "dodge") + 
+  coord_flip()  +
+  scale_x_reverse(breaks = (0:23)) +
+  scale_fill_manual(values=cbPaletteMin) +
+  labs(y = "Number of rides in thousands", x = "Time of day", fill = NULL)
+
+# ggsave("dailyOverview.png",width=3840,height = 2160,unit="px")
+
+all_trips_v5 %>% 
+  filter(day_of_week == "Saturday" | day_of_week == "Sunday" ) %>%
+  group_by(member_casual, hours) %>% 
+  summarise(number_of_rides = n()) %>% 
+  arrange(member_casual, as.numeric(hours))  %>% 
+  ggplot( aes(x = as.numeric(hours), y = number_of_rides / 1000, fill = member_casual)) +
+  geom_col(position = "dodge") + 
+  coord_flip()  +
+  scale_x_reverse(breaks = (0:23)) +
+  scale_fill_manual(values=cbPaletteMin) +
+  labs(y = "number of rides in thousands", x = NULL, fill = NULL)
+
+
+all_trips_v5 %>% 
+  filter(day_of_week != "Saturday" | day_of_week != "Sunday" ) %>%
+  group_by(member_casual, hours) %>% 
+  summarise(number_of_rides = n()) %>% 
+  arrange(member_casual, as.numeric(hours))  %>% 
+  ggplot( aes(x = as.numeric(hours), y = number_of_rides / 1000, fill = member_casual)) +
+  geom_col(position = "dodge") + 
+  coord_flip()  +
+  scale_x_reverse(breaks = (0:23)) +
+  scale_fill_manual(values=cbPaletteMin) +
+  labs(y = "number of rides in thousands", x = NULL, fill = NULL)
+
+
+```
+\fontsize{10}{12}
+\selectfont
+
+* Looking at usage over hours of the day, members are clustered around morning and afternoon, preceding the start of a typical workday and following the end of it, which seems to support the theory that members mainly use the service to commute
+
+

@@ -1,0 +1,150 @@
+---
+title: "Detailed data sources processing"
+author: "Michael-Philipp Stiebing"
+date: "2023-03-01"
+output: 
+  pdf_document: 
+    latex_engine: lualatex
+    keep_tex: yes
+mainfont: Bahnschrift:style=Bold
+monofont: Bahnschrift:style=Condensed
+---
+
+
+```{r setup, include=FALSE }
+knitr::opts_chunk$set(echo = TRUE)
+```
+\fontsize{10}{12}
+\selectfont
+* Download source data from **https://divvy-tripdata.s3.amazonaws.com/index.html**
+* License for using the data from **https://ride.divvybikes.com/data-license-agreement**
+* Create project root folder - **/20221205-capstone_datascience/** - as **../** in this document
+* Move raw, zipped data to **../099_original_raw_data/001_raw_compressed/**
+* Unzip data into **../099_original_raw_data/002_raw_csv/**
+
+* Copy data to **../002_data/001_csv/** as a working copy
+* Rename file **202209-divvy-publictripdata.csv** in **../002_data/001_csv/** to **202209-divvy-tripdata.csv** in order to match filename schema
+
+* Download quarterly formatted data from **https://divvy-tripdata.s3.amazonaws.com/index.html** to compare with monthly formatted data
+* Copy dataset **Divvy_Trips_2020_Q1.csv** to **../099_original_raw_data/002_raw_csv/** and working copy to **../002_data/001_csv/**
+
+* Comparing data in **Divvy_Trips_2020_Q1.csv** to **202210-divvy-tripdata.csv** as to similarity.
+  + Using OpenOffice Calc V 4.1.7 for comparison
+  + Column Names match
+  + The rideable_type column contains more information in the **202210-divvy-tripdata.csv** as opposed to the **Divvy_Trips_2020_Q1.csv**
+    + In **Divvy_Trips_2020_Q1.csv** only one type: dockable_bike
+    + In **202210-divvy-tripdata.csv** either classic_bike or electric_bike
+  + The columns start_station_id and end_station_id have different values
+    + In **Divvy_Trips_2020_Q1.csv** the values are numerical
+    + In **202210-divvy-tripdata.csv** some values are numerical, others are a mix of uppercase letters and numbers a few also include a dash '-'
+  + The columns start_lat, start_lng, end_lat, end_lng are formatted differently
+    + In **Divvy_Trips_2020_Q1.csv** the values are truncated to 4 decimal places
+    + In **202210-divvy-tripdata.csv** the values contain up to 10 decimal places
+  + Some records in **202210-divvy-tripdata.csv** do not contain start or end station data, leading me to believe it includes data from bikes that were rented not from a station, but standing around in the city.
+  
+* Checking **202110-divvy-tripdata.csv**, the oldest of the monthly datasets, to confirm that the differences persist
+* I will be using the monthly datasets for the analysis, because:
+  + The data is more current
+  + It includes additional data as to the type of bike used
+  + The data that is missing (station names) or not formatted nicely (gps coordinates) doesn't seem to impact the analysis
+\fontsize{9}{11}
+\selectfont
+```{r load libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(readr)
+```
+\fontsize{9}{11}
+\selectfont
+```{r create dataframe,message=FALSE, warning=FALSE}
+setwd("/home/mikiR/remote_transfer/")
+X202110_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202110-divvy-tripdata.csv")
+X202111_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202111-divvy-tripdata.csv")
+X202112_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202112-divvy-tripdata.csv")
+X202201_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202201-divvy-tripdata.csv")
+X202202_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202202-divvy-tripdata.csv")
+X202203_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202203-divvy-tripdata.csv")
+X202204_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202204-divvy-tripdata.csv")
+X202205_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202205-divvy-tripdata.csv")
+X202206_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202206-divvy-tripdata.csv")
+X202207_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202207-divvy-tripdata.csv")
+X202208_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202208-divvy-tripdata.csv")
+X202209_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202209-divvy-tripdata.csv")
+X202210_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202210-divvy-tripdata.csv")
+
+all_trips <- bind_rows(
+                  X202110_divvy_tripdata, X202111_divvy_tripdata, X202112_divvy_tripdata, 
+                  X202201_divvy_tripdata, X202202_divvy_tripdata, X202203_divvy_tripdata, 
+                  X202204_divvy_tripdata, X202205_divvy_tripdata, X202206_divvy_tripdata, 
+                  X202207_divvy_tripdata, X202208_divvy_tripdata, X202209_divvy_tripdata, 
+                  X202210_divvy_tripdata)
+```
+\fontsize{9}{11}
+\selectfont
+```{r}
+all_trips$date <- as.Date(all_trips$started_at)
+all_trips$month <- format(as.Date(all_trips$date), "%m")
+all_trips$day <- format(as.Date(all_trips$date), "%d")
+all_trips$year <- format(as.Date(all_trips$date), "%Y")
+all_trips$day_of_week <- format(as.Date(all_trips$date), "%A")
+all_trips$ride_length <- difftime(all_trips$ended_at,all_trips$started_at)
+
+all_trips$ride_length <- as.numeric(as.character(all_trips$ride_length))
+```
+\fontsize{10}{12}
+\selectfont
+* Remove bad data
+\fontsize{9}{11}
+\selectfont
+```{r}
+all_trips_v2 <- all_trips[!(all_trips$ride_length<0),]
+```
+\fontsize{10}{12}
+\selectfont
+* move bad data into a dataframe to doublecheck
+\fontsize{9}{11}
+\selectfont
+```{r}
+all_trips_errors <- all_trips[(all_trips$ride_length<0),]
+```
+\fontsize{10}{12}
+\selectfont
+
+*   Trying to calculate the distance between gps coordinates strart / end
+\fontsize{9}{11}
+\selectfont
+```{r}
+
+library(geosphere) 
+```
+\fontsize{9}{11}
+\selectfont
+```{r}
+
+all_trips_v3 <- all_trips_v2 %>% 
+              mutate(geodist = distHaversine(
+                    cbind(all_trips_v2$start_lng,all_trips_v2$start_lat), 
+                    cbind(all_trips_v2$end_lng,all_trips_v2$end_lat)))
+```
+\fontsize{10}{12}
+\selectfont
+*   filter all trips with distance = 0 into a dataframe called round_trips, the assumtion being that when the trip ends where it started
+\fontsize{9}{11}
+\selectfont
+```{r}
+round_trips = filter(all_trips_v3,geodist == 0)
+```

@@ -1,0 +1,420 @@
+This is LuaTeX, Version 1.0.4 (TeX Live 2017/Debian)  (format=luatex 2023.2.9)  2 MAR 2023 10:43
+ restricted system commands enabled.
+**20230301_PREPARE_data_sources_processing.tex
+(./20230301_PREPARE_data_sources_processing.tex
+! Undefined control sequence.
+l.2 \PassOptionsToPackage
+                       {unicode}{hyperref}
+? 
+! Undefined control sequence.
+l.3 \PassOptionsToPackage
+                       {hyphens}{url}
+? 
+! Undefined control sequence.
+l.5 \documentclass
+                [
+? 
+! Undefined control sequence.
+l.7 \usepackage
+             {amsmath,amssymb}
+? 
+! Undefined control sequence.
+l.8 \usepackage
+             {lmodern}
+? 
+! Undefined control sequence.
+l.9 \usepackage
+             {iftex}
+? 
+! Undefined control sequence.
+l.10 \ifPDFTeX
+            
+? 
+! Undefined control sequence.
+l.11   \usepackage
+                [T1]{fontenc}
+? 
+! Undefined control sequence.
+l.12   \usepackage
+                [utf8]{inputenc}
+? 
+! Undefined control sequence.
+l.13   \usepackage
+                {textcomp} % provide euro and other symbols
+? 
+! Extra \else.
+l.14 \else
+         % if luatex or xetex
+? 
+! Undefined control sequence.
+l.15   \usepackage
+                {unicode-math}
+? 
+! Undefined control sequence.
+l.16   \defaultfontfeatures
+                         {Scale=MatchLowercase}
+? 
+! Undefined control sequence.
+l.17   \defaultfontfeatures
+                         [\rmfamily]{Ligatures=TeX,Scale=1}
+? 
+! Undefined control sequence.
+l.17   \defaultfontfeatures[\rmfamily
+                                   ]{Ligatures=TeX,Scale=1}
+? 
+! Undefined control sequence.
+l.18   \setmainfont
+                 []{Bahnschrift:style=Bold}
+? 
+! Undefined control sequence.
+l.19   \setmonofont
+                 []{Bahnschrift:style=Condensed}
+? 
+! Extra \fi.
+l.20 \fi
+      
+? 
+! Undefined control sequence.
+l.22 \IfFileExists
+                {upquote.sty}{\usepackage{upquote}}{}
+? 
+! Undefined control sequence.
+l.22 \IfFileExists{upquote.sty}{\usepackage
+                                         {upquote}}{}
+? 
+! Undefined control sequence.
+l.23 \IfFileExists
+                {microtype.sty}{% use microtype if available
+? 
+! Undefined control sequence.
+l.24   \usepackage
+                []{microtype}
+? 
+! Undefined control sequence.
+l.25   \UseMicrotypeSet
+                     [protrusion]{basicmath} % disable protrusion for tt fonts
+? 
+! Undefined control sequence.
+l.27 \makeatletter
+                
+? 
+! Undefined control sequence.
+l.28 \@
+     ifundefined{KOMAClassName}{% if non-KOMA class
+? 
+! Undefined control sequence.
+l.29   \IfFileExists
+                  {parskip.sty}{%
+? 
+! Undefined control sequence.
+l.30     \usepackage
+                  {parskip}
+? 
+! Undefined control sequence.
+l.32     \setlength
+                 {\parindent}{0pt}
+? 
+! Missing number, treated as zero.
+<to be read again> 
+}
+l.32     \setlength{\parindent}
+                             {0pt}
+? q
+OK, entering \batchmode...
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+}
+l.32     \setlength{\parindent}
+                             {0pt}
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+! Undefined control sequence.
+l.33     \setlength
+                 {\parskip}{6pt plus 2pt minus 1pt}}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Missing number, treated as zero.
+<to be read again> 
+}
+l.33     \setlength{\parskip}
+                           {6pt plus 2pt minus 1pt}}
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+}
+l.33     \setlength{\parskip}
+                           {6pt plus 2pt minus 1pt}}
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
+! Undefined control sequence.
+l.35   \KOMAoptions
+                 {parskip=half}}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.36 \makeatother
+               
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.37 \usepackage
+              {xcolor}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.38 \usepackage
+              [margin=1in]{geometry}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.39 \usepackage
+              {color}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.40 \usepackage
+              {fancyvrb}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.41 \newcommand
+              {\VerbBar}{|}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.41 \newcommand{\VerbBar
+                       }{|}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.42 \newcommand
+              {\VERB}{\Verb[commandchars=\\\{\}]}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.42 \newcommand{\VERB
+                    }{\Verb[commandchars=\\\{\}]}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.42 \newcommand{\VERB}{\Verb
+                           [commandchars=\\\{\}]}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Argument of \\ has an extra }.
+<inserted text> 
+\par 
+<to be read again> 
+}
+l.42 \newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+                                                 
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+\{\}]
+! Paragraph ended before \\ was complete.
+<to be read again> 
+\par 
+<to be read again> 
+}
+l.42 \newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+                                                 
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+
+Overfull \hbox (10.05156pt too wide) in paragraph at lines 2--42
+[]\tenrm uni-code-hy-per-ref hy-phen-surl [ ]ar-ti-cle ams-math,amssymb lmod-er
+n if-tex [T1]fontenc [utf8]in-pu-tenc textcomp|
+
+\hbox(7.5+2.5)x469.75499, glue set - 1.0, direction TLT
+.\localpar
+..\localinterlinepenalty=0
+..\localbrokenpenalty=0
+..\localleftbox=null
+..\localrightbox=null
+.\hbox(0.0+0.0)x20.0, direction TLT
+.\tenrm u
+.\tenrm n
+.\tenrm i
+.etc.
+
+
+Overfull \hbox (25.82933pt too wide) in paragraph at lines 2--42
+\tenrm unicode-math Scale=MatchLow-er-case []Lig-a-tures=TeX,Scale=1 []Bahn-sch
+rift:style=Bold []Bahn-schrift:style=Con-|
+
+\hbox(7.5+2.5)x469.75499, glue set - 1.0, direction TLT
+.\tenrm u
+.\tenrm n
+.\tenrm i
+.\tenrm c
+.\tenrm o
+.etc.
+
+
+Overfull \hbox (40.05167pt too wide) in paragraph at lines 2--42
+\tenrm densed up-quote.styupquote mi-crotype.sty[]mi-crotype [pro-tru-sion]ba-s
+ic-math  ifun-de-fined-KO-MAClass-Nameparskip.sty-|
+
+\hbox(7.5+2.5)x469.75499, glue set - 1.0, direction TLT
+.\tenrm d
+.\tenrm e
+.\tenrm n
+.\tenrm s
+.\tenrm e
+.etc.
+
+! Undefined control sequence.
+l.43 \DefineVerbatimEnvironment
+                             {Highlighting}{Verbatim}{commandchars=\\\{\}}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Argument of \\ has an extra }.
+<inserted text> 
+\par 
+<to be read again> 
+}
+l.43 ...Highlighting}{Verbatim}{commandchars=\\\{\}}
+                                                  
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+\{\}
+! Paragraph ended before \\ was complete.
+<to be read again> 
+\par 
+<to be read again> 
+}
+l.43 ...Highlighting}{Verbatim}{commandchars=\\\{\}}
+                                                  
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+! Undefined control sequence.
+l.45 \usepackage
+              {framed}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.46 \definecolor
+               {shadecolor}{RGB}{248,248,248}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.47 \newenvironment
+                  {Shaded}{\begin{snugshade}}{\end{snugshade}}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.47 \newenvironment{Shaded}{\begin
+                                 {snugshade}}{\end{snugshade}}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+ [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}])
+(\end occurred inside a group at level 1)
+
+### simple group (level 1) entered at line 47 ({)
+### bottom level</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+r10.pfb>
+Output written on 20230301_PREPARE_data_sources_processing.pdf (1 page, 21601 by
+tes).
+
+PDF statistics: 12 PDF objects out of 1000 (max. 8388607)
+ 7 compressed objects within 1 object stream
+ 0 named destinations out of 1000 (max. 131072)
+ 1 words of extra memory for PDF output out of 10000 (max. 100000000)
+

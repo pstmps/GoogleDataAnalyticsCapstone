@@ -1,0 +1,202 @@
+---
+title: "Cyclistic case study"
+author: "Cyclistic marketing team"
+title-slide-attributes:
+  center-title-slide: true
+#  data-background-image: cyclistic_logo.png
+#  data-background-size: contain
+#  data-background-opacity: "0.3"
+format: 
+  revealjs:
+    logo: cyclistic_logo.png
+    footer: "Cyclistic User analysis presentation by Michael-Philipp Stiebing 2023-03-21"
+    code-fold: true
+    css: style.css
+
+editor: visual
+---
+
+## 
+
+## [Our Task]{.smallcaps}
+
+#::: {.columns .v-center-grid}
+#::: {.column .item-a width="100%"}
+-   How can we design a marketing campaign to convert casual users into subscribers?
+
+-   Looking at the usage data from the last 12 months, what insights can we gain to help us answer this question?
+:::
+:::
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(readr)
+library(geosphere)
+
+setwd("/home/mikiR/remote_transfer/")
+X202110_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202110-divvy-tripdata.csv")
+X202111_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202111-divvy-tripdata.csv")
+X202112_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202112-divvy-tripdata.csv")
+X202201_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202201-divvy-tripdata.csv")
+X202202_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202202-divvy-tripdata.csv")
+X202203_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202203-divvy-tripdata.csv")
+X202204_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202204-divvy-tripdata.csv")
+X202205_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202205-divvy-tripdata.csv")
+X202206_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202206-divvy-tripdata.csv")
+X202207_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202207-divvy-tripdata.csv")
+X202208_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202208-divvy-tripdata.csv")
+X202209_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202209-divvy-tripdata.csv")
+X202210_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202210-divvy-tripdata.csv")
+
+all_trips <- bind_rows(
+                  X202110_divvy_tripdata, X202111_divvy_tripdata, X202112_divvy_tripdata, X202201_divvy_tripdata,
+                  X202202_divvy_tripdata, X202203_divvy_tripdata, X202204_divvy_tripdata, X202205_divvy_tripdata,
+                  X202206_divvy_tripdata, X202207_divvy_tripdata, X202208_divvy_tripdata, X202209_divvy_tripdata, 
+                  X202210_divvy_tripdata)
+
+climate_chicago_202110_202210 <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/climate_chicago_202110-202210.csv")
+
+```
+
+```{r include=FALSE}
+all_trips$date <- as.Date(all_trips$started_at)
+all_trips$month <- format(as.Date(all_trips$date), "%m")
+all_trips$day <- format(as.Date(all_trips$date), "%d")
+all_trips$year <- format(as.Date(all_trips$date), "%Y")
+all_trips$day_of_week <- format(as.Date(all_trips$date), "%A")
+all_trips$timeofday <- format(as.POSIXct(all_trips$started_at), format = "%H:%M:%S")
+all_trips$hours <- format(as.POSIXct(all_trips$started_at), format = "%H")
+
+all_trips$ride_length <- difftime(all_trips$ended_at,all_trips$started_at)
+all_trips$ride_length <- as.numeric(as.character(all_trips$ride_length))
+
+all_trips_v2 <- all_trips[!(all_trips$ride_length<0),]
+all_trips_errors <- all_trips[(all_trips$ride_length<0),]
+
+all_trips_v3 <- all_trips_v2 %>% 
+              mutate(geodist = distHaversine(
+                    cbind(all_trips_v2$start_lng,all_trips_v2$start_lat), 
+                    cbind(all_trips_v2$end_lng,all_trips_v2$end_lat)))
+
+all_trips_v4 <- (filter(all_trips_v3,ride_length < 86400 & ride_length > 60 & ride_length != 0 & !is.na(geodist)))
+
+all_trips_v5 <- all_trips_v4 %>% 
+  mutate(speed = geodist / ride_length) %>%
+  filter(speed < 10)
+
+climate_chicago_202110_202210$date <- as.Date(climate_chicago_202110_202210$date)
+
+# Set up two color palette that are compatible with all kinds of color vision, 
+# from http://www.cookbook-r.com/Graphs/Colors_(ggplot2)/
+
+cbPaletteMin <- c("#E69F00", "#0072B2")
+
+```
+
+## 
+
+::: {.columns .v-center-grid}
+::: {.column width="100%"}
+<div class="item-a"><p>
+[[usage statistics for members and casual users from October 2021 to 2022]{.smallcaps}]{#smalltext}
+</p>
+</div>
+<div class="item-a">
+```{r}
+#| warning: false
+#| echo: false
+all_trips_v5 %>% 
+  ggplot() +
+  geom_smooth(data = climate_chicago_202110_202210, aes(x = date, y = as.double(avgtemp) / 20000),method=loess,color="#D55E00") +
+  geom_density( aes(x = date,fill = member_casual),alpha = .3) +
+  scale_y_continuous(
+    breaks=c(seq(0.000,0.005,by=0.0005)), 
+    labels=c(seq(0,100,10)),
+    sec.axis = sec_axis(~ (((. * 20000) - 32) * 5/9), name = "Average daily temperature in °C",breaks=c(seq(-15,40,5)))
+    ) +
+  scale_x_date(date_breaks = "1 month") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.9, hjust=1)) +
+  scale_fill_manual(values=cbPaletteMin) +
+  labs(y = "Average daily temperature in °F", x = NULL, fill = NULL, title ="usage statistics for members and casual users from october 2021 to 2022") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+</div>
+<div class="item-a">
+</div>
+:::
+:::
+
+## 
+
+::: {.columns .v-center-container}
+::: {.column width="70%"}
+```{r}
+#| label: fig-yearlyoverview
+#| warning: false
+#| echo: false
+all_trips_v5 %>% 
+  ggplot() +
+  geom_smooth(data = climate_chicago_202110_202210, aes(x = date, y = as.double(avgtemp) / 20000),method=loess,color="#D55E00") +
+  geom_density( aes(x = date,fill = member_casual),alpha = .3) +
+  scale_y_continuous(
+    breaks=c(seq(0.000,0.005,by=0.0005)), 
+    labels=c(seq(0,100,10)),
+    sec.axis = sec_axis(~ (((. * 20000) - 32) * 5/9), name = "Average daily temperature in °C",breaks=c(seq(-15,40,5)))
+    ) +
+  scale_x_date(date_breaks = "1 month") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.9, hjust=1)) +
+  scale_fill_manual(values=cbPaletteMin) +
+  labs(y = "Average daily temperature in °F", x = NULL, fill = NULL) 
+
+```
+:::
+
+::: {.column width="30%"}
+###### [key insights:]{.smallcaps}
+
+-   usage of the service in general is higher when the weather is good
+-   in bad weather, more members use the service than casual users
+-   in good weather, casual users outnumber members
+:::
+:::
+
+## 
+
+@fig-dailyoverview explores usage statistics for members and casual users during the course of a day
+
+```{r}
+#| label: fig-dailyoverview
+#| fig-cap: Usage statistics over time of day
+#| warning: false
+#| echo: false
+
+all_trips_v5 %>% 
+  group_by(member_casual, hours) %>% 
+  summarise(number_of_rides = n()) %>% 
+  arrange(member_casual, as.numeric(hours))  %>% 
+  ggplot( aes(x = as.numeric(hours), y = number_of_rides / 1000, fill = member_casual)) +
+  geom_col(position = "dodge") + 
+  coord_flip()  +
+  scale_x_reverse(breaks = (0:23)) +
+  scale_fill_manual(values=cbPaletteMin) +
+  labs(y = "Number of rides in thousands", x = "Time of day", fill = NULL)
+
+```

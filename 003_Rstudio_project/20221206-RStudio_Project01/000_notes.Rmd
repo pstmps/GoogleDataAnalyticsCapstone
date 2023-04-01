@@ -1,0 +1,693 @@
+---
+title: "000_notes"
+author: "Michael-Philipp Stiebing"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 2022-12-05
+
+* Download source data from **https://divvy-tripdata.s3.amazonaws.com/index.html**
+* License for using the data from **https://ride.divvybikes.com/data-license-agreement**
+* Create project root folder - **/20221205-capstone_datascience/** - as **../** in this document
+* Move raw, zipped data to **../099_original_raw_data/001_raw_compressed/**
+* Unzip data into **../099_original_raw_data/002_raw_csv/**
+
+* Download copy of the assignment to \
+**../098_documentation/20221205-DAC8_Case_Study_1.pdf**
+* Download copy of the license to \
+**../098_documentation/20221205-Data_License_Agreement_Divvy_Bikes.pdf**
+* Download copy of the R Script to \
+**../098_documentation/20221205-Copy_of_Divvy_Exercise_R_Script.txt**
+
+* Create **../001_deliverables/**
+
+* Copy data to **../002_data/001_csv/** as a working copy
+* Rename file **202209-divvy-publictripdata.csv** in **../002_data/001_csv/** to **202209-divvy-tripdata.csv** in order to match filename schema
+
+* Download quarterly formatted data from **https://divvy-tripdata.s3.amazonaws.com/index.html** to compare with monthly formatted data
+* Copy dataset **Divvy_Trips_2020_Q1.csv** to **../099_original_raw_data/002_raw_csv/** and working copy to **../002_data/001_csv/**
+
+* Comparing data in **Divvy_Trips_2020_Q1.csv** to **202210-divvy-tripdata.csv** as to similarity.
+  + Using OpenOffice Calc V 4.1.7 for comparison
+  + Column Names match
+  + The rideable_type column contains more information in the **202210-divvy-tripdata.csv** as opposed to the **Divvy_Trips_2020_Q1.csv**
+    + In **Divvy_Trips_2020_Q1.csv** only one type: dockable_bike
+    + In **202210-divvy-tripdata.csv** either classic_bike or electric_bike
+  + The columns start_station_id and end_station_id have different values
+    + In **Divvy_Trips_2020_Q1.csv** the values are numerical
+    + In **202210-divvy-tripdata.csv** some values are numerical, others are a mix of uppercase letters and numbers a few also include a dash '-'
+  + The columns start_lat, start_lng, end_lat, end_lng are formatted differently
+    + In **Divvy_Trips_2020_Q1.csv** the values are truncated to 4 decimal places
+    + In **202210-divvy-tripdata.csv** the values contain up to 10 decimal places
+  + Some records in **202210-divvy-tripdata.csv** do not contain start or end station data, leading me to believe it includes data from bikes that were rented not from a station, but standing around in the city.
+  
+* Checking **202110-divvy-tripdata.csv**, the oldest of the monthly datasets, to confirm that the differences persist
+* I will be using the monthly datasets for the analysis, because:
+  + The data is more current
+  + It includes additional data as to the type of bike used
+  + The data that is missing (station names) or not formatted nicely (gps coordinates) doesn't seem to impact the analysis
+
+## 2022-12-06
+
+* Creating R Studio Project in **../003_Rstudio_project/20221206-RStudio_Project01/**
+* Create R Studio Script **001_Capstone01.R**
+* Work through **20221205-Copy_of_Divvy_Exercise_R_Script** and adapt some commands to the new dataset
+
+```{r load libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(readr)
+```
+
+```{r create dataframe,message=FALSE, warning=FALSE}
+setwd("/home/mikiR/remote_transfer/")
+X202110_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202110-divvy-tripdata.csv")
+X202111_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202111-divvy-tripdata.csv")
+X202112_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202112-divvy-tripdata.csv")
+X202201_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202201-divvy-tripdata.csv")
+X202202_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202202-divvy-tripdata.csv")
+X202203_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202203-divvy-tripdata.csv")
+X202204_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202204-divvy-tripdata.csv")
+X202205_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202205-divvy-tripdata.csv")
+X202206_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202206-divvy-tripdata.csv")
+X202207_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202207-divvy-tripdata.csv")
+X202208_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202208-divvy-tripdata.csv")
+X202209_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202209-divvy-tripdata.csv")
+X202210_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202210-divvy-tripdata.csv")
+
+all_trips <- bind_rows(X202110_divvy_tripdata, X202111_divvy_tripdata, X202112_divvy_tripdata, 
+                       X202201_divvy_tripdata, X202202_divvy_tripdata, X202203_divvy_tripdata, 
+                       X202204_divvy_tripdata, X202205_divvy_tripdata, X202206_divvy_tripdata, 
+                       X202207_divvy_tripdata, X202208_divvy_tripdata, X202209_divvy_tripdata, 
+                       X202210_divvy_tripdata)
+```
+
+```{r}
+all_trips$date <- as.Date(all_trips$started_at)
+all_trips$month <- format(as.Date(all_trips$date), "%m")
+all_trips$day <- format(as.Date(all_trips$date), "%d")
+all_trips$year <- format(as.Date(all_trips$date), "%Y")
+all_trips$day_of_week <- format(as.Date(all_trips$date), "%A")
+all_trips$ride_length <- difftime(all_trips$ended_at,all_trips$started_at)
+
+all_trips$ride_length <- as.numeric(as.character(all_trips$ride_length))
+```
+
+## 2023-01-09
+
+* Continue preparing the dataset
+
+* Remove bad data
+
+
+```{r}
+all_trips_v2 <- all_trips[!(all_trips$ride_length<0),]
+```
+
+* move bad data into a dataframe to doublecheck
+
+```{r}
+all_trips_errors <- all_trips[(all_trips$ride_length<0),]
+```
+
+* Conduct descriptive analysis as per script
+
+```{r}
+
+# Descriptive analysis on ride_length (all figures in seconds)
+mean(all_trips_v2$ride_length) #straight average (total ride length / rides)
+median(all_trips_v2$ride_length) #midpoint number in the ascending array of ride lengths
+max(all_trips_v2$ride_length) #longest ride
+min(all_trips_v2$ride_length) #shortest ride
+
+
+# You can condense the four lines above to one line using summary() on the specific attribute
+summary(all_trips_v2$ride_length)
+
+
+# Compare members and casual users
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = mean)
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = median)
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = max)
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = min)
+
+
+# See the average ride time by each day for members vs casual users
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual + all_trips_v2$day_of_week, FUN = mean)
+
+
+# Notice that the days of the week are out of order. Let's fix that.
+all_trips_v2$day_of_week <- ordered(all_trips_v2$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+
+
+# Now, let's run the average ride time by each day for members vs casual users
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual + all_trips_v2$day_of_week, FUN = mean)
+
+
+# analyze ridership data by type and weekday
+all_trips_v2 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>%  #creates weekday field using wday()
+  group_by(member_casual, weekday) %>%  #groups by usertype and weekday
+  summarise(number_of_rides = n()                                                        #calculates the number of rides and average duration 
+  ,average_duration = mean(ride_length)) %>%                 # calculates the average duration
+  arrange(member_casual, weekday)                                                                # sorts
+
+
+# Let's visualize the number of rides by rider type
+all_trips_v2 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = number_of_rides, fill = member_casual)) +
+  geom_col(position = "dodge")
+
+
+# Let's create a visualization for average duration
+all_trips_v2 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = average_duration, fill = member_casual)) +
+  geom_col(position = "dodge")
+
+
+
+```
+## 2023-01-10
+
+*   Trying to calculate the distance between gps coordinates strart / end
+
+```{r}
+
+library(geosphere) 
+```
+
+```{r}
+
+all_trips_v3 <- all_trips_v2 %>%  
+  mutate(geodist = distHaversine(cbind(all_trips_v2$start_lng,all_trips_v2$start_lat),cbind(all_trips_v2$end_lng,all_trips_v2$end_lat)))
+```
+
+
+*   To fix performance issues, I had to setup a RStudio server 
+
+          CentOS 9 Stream 
+          RStudio 2022.12.0+353 "Elsbeth Geranium" Release
+          R version 4.2.2
+
+
+
+```{r eval=FALSE, include=FALSE}
+
+all_trips_v3 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(average_distance = mean(geodist)
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = geodist, fill = member_casual)) +
+  geom_col(position = "dodge")
+
+```
+
+## 2023-01-17
+
+*   filter all trips with distance = 0 into a dataframe called round_trips, the assumtion being that when the trip ends where it started
+
+```{r}
+round_trips = filter(all_trips_v3,geodist == 0)
+```
+
+```{r}
+
+# Descriptive analysis on ride_length (all figures in seconds)
+mean(round_trips$ride_length) #straight average (total ride length / rides)
+median(round_trips$ride_length) #midpoint number in the ascending array of ride lengths
+max(round_trips$ride_length) #longest ride
+min(round_trips$ride_length) #shortest ride
+
+
+# You can condense the four lines above to one line using summary() on the specific attribute
+summary(round_trips$ride_length)
+
+
+# Compare members and casual users
+aggregate(round_trips$ride_length ~ round_trips$member_casual, FUN = mean)
+aggregate(round_trips$ride_length ~ round_trips$member_casual, FUN = median)
+aggregate(round_trips$ride_length ~ round_trips$member_casual, FUN = max)
+aggregate(round_trips$ride_length ~ round_trips$member_casual, FUN = min)
+
+
+# See the average ride time by each day for members vs casual users
+aggregate(round_trips$ride_length ~ round_trips$member_casual + round_trips$day_of_week, FUN = mean)
+
+
+# Notice that the days of the week are out of order. Let's fix that.
+round_trips$day_of_week <- ordered(round_trips$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+
+
+# Now, let's run the average ride time by each day for members vs casual users
+aggregate(round_trips$ride_length ~ round_trips$member_casual + round_trips$day_of_week, FUN = mean)
+
+
+# analyze ridership data by type and weekday
+round_trips %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>%  #creates weekday field using wday()
+  group_by(member_casual, weekday) %>%  #groups by usertype and weekday
+  summarise(number_of_rides = n()                                                        #calculates the number of rides and average duration 
+  ,average_duration = mean(ride_length)) %>%                 # calculates the average duration
+  arrange(member_casual, weekday)                                                                # sorts
+
+
+# Let's visualize the number of rides by rider type
+round_trips %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = number_of_rides, fill = member_casual)) +
+  geom_col(position = "dodge")
+
+
+# Let's create a visualization for average duration
+round_trips %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = average_duration, fill = member_casual)) +
+  geom_col(position = "dodge")
+```
+```{r}
+aggregate(round_trips$ride_length ~ round_trips$member_casual, FUN = mean)
+
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = mean)
+aggregate(all_trips_v3$ride_length ~ all_trips_v3$member_casual, FUN = mean)
+aggregate(round_trips$ride_length ~ round_trips$member_casual, FUN = mean)
+aggregate(round_trips$ride_length ~ round_trips$member_casual + round_trips$day_of_week, FUN = mean)
+
+```
+## 2023-02-22
+```{r}
+# Let's create a visualization for average duration
+all_trips_v2 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = average_duration, fill = rideable_type)) +
+  geom_col()
+```
+
+
+```{r}
+round_trips %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  filter(member_casual == 'casual') %>%
+  group_by(weekday,rideable_type) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(weekday)  %>% 
+  ggplot(aes(x = weekday, y = average_duration, fill = rideable_type)) +
+  geom_col()
+```
+
+## 2023-03-06
+
+* While working with the data, I noticed some very long rental periods ( > 86400 seconds, aka one day) I think this would be maintainance work, as this would be unlikely to be a rental from a customer
+* Also, I filtered out all rentals under 1 minute, since these do not represent useful customer behavior as well
+* Similarly, all entries that have a geodist value of NA - because they don't have a return station value, are similarly out for maintainance, or stolen, or in case of very short rental periods of a few seconds, maybe a booking error or system test
+
+* I filtered these sets into dataframes into short_ride long_ride and nadist_ride in order to analyze a little bit
+
+```{r}
+short_ride <- (filter(all_trips_v3,ride_length < 60 & !is.na(geodist)))
+long_ride <- (filter(all_trips_v3,ride_length > 86400 & !is.na(geodist)))
+nadist_ride <- (filter(all_trips_v3,is.na(geodist)))
+
+summary(filter(short_ride)$ride_length)
+summary(filter(long_ride)$ride_length)
+summary(filter(nadist_ride)$ride_length)
+
+all_trips_v4 <- (filter(all_trips_v3,ride_length < 86400 & ride_length > 60 & ride_length != 0 & !is.na(geodist)))
+```
+
+
+## 2023-03-07
+
+* Trying to find out more about the different behaviours between members and casual users
+* First I tried to compare rides per group that cross a certain Threshhold, I chose the 45 min (2700 seconds) and the 3 hour threshhold (10800 seconds)
+* This seems to confirm: Casual users tend to take a lot longer rides compared to members
+* Then I tried plotting instances of casual rides vs members rides across the 12 month period.
+  + Total rides are highest in summer, lowest in winter
+  + More members use the service than casual users, except on the weekends, especially in summer
+  + This trend is even more pronounced for "round trips" where geodist = 0 This could be tourists
+
+
+
+```{r}
+nrow(all_trips_v4[all_trips_v4$member_casual == "casual",])
+nrow(all_trips_v4[all_trips_v4$member_casual == "member",])
+#nrow(all_trips_v4[all_trips_v4$member_casual == "casual" & all_trips_v4$ride_length > 2700,])
+nrow(all_trips_v4[all_trips_v4$member_casual == "casual" & all_trips_v4$ride_length > 2700,]) / nrow(all_trips_v4[all_trips_v4$member_casual == "casual",])
+nrow(all_trips_v4[all_trips_v4$member_casual == "member" & all_trips_v4$ride_length > 2700,]) / nrow(all_trips_v4[all_trips_v4$member_casual == "member",])
+nrow(all_trips_v4[all_trips_v4$member_casual == "casual" & all_trips_v4$ride_length > 10800,]) / nrow(all_trips_v4[all_trips_v4$member_casual == "casual",])
+
+all_trips_v4 %>% 
+  group_by(month, member_casual) %>%
+  summarize(cascount = sum(member_casual == "casual"), memcount = sum(member_casual == "member"))
+
+
+ggplot(all_trips_v4, aes(date, color = member_casual)) + 
+  geom_freqpoly(binwidth=7)
+
+
+all_trips_v4 %>% 
+  filter(day_of_week == "Saturday" | day_of_week == "Sunday") %>%
+ggplot(aes(date, color = member_casual)) + 
+  geom_freqpoly(binwidth=7)
+
+all_trips_v4 %>% 
+  filter(day_of_week != "Saturday" | day_of_week != "Sunday") %>%
+ggplot(aes(date, color = member_casual)) + 
+  geom_freqpoly(binwidth=7)
+
+all_trips_v4 %>% 
+  filter(geodist == 0) %>%
+  filter(day_of_week == "Saturday" | day_of_week == "Sunday") %>%
+ggplot(aes(date, color = member_casual)) + 
+  geom_freqpoly(binwidth=7)
+
+
+all_trips_v4 %>% 
+  filter(geodist == 0) %>%
+ggplot(aes(date, color = member_casual)) + 
+  geom_freqpoly(binwidth=7)
+# 
+# all_trips_v4 %>% 
+#   filter(day_of_week == "Monday") %>%
+# ggplot(aes(date, color = member_casual)) + 
+#   geom_freqpoly(binwidth=7)
+# 
+# all_trips_v4 %>% 
+#   filter(day_of_week == "Tuesday") %>%
+# ggplot(aes(date, color = member_casual)) + 
+#   geom_freqpoly(binwidth=7)
+# 
+# all_trips_v4 %>% 
+#   filter(day_of_week == "Wednesday") %>%
+# ggplot(aes(date, color = member_casual)) + 
+#   geom_freqpoly(binwidth=7)
+# 
+# all_trips_v4 %>% 
+#   filter(day_of_week == "Thursday") %>%
+# ggplot(aes(date, color = member_casual)) + 
+#   geom_freqpoly(binwidth=7)
+# 
+# all_trips_v4 %>% 
+#   filter(day_of_week == "Friday") %>%
+# ggplot(aes(date, color = member_casual)) + 
+#   geom_freqpoly(binwidth=7)
+# 
+
+# 2700s > 45 min 10800s > 3 hours
+
+  
+```
+## 2023-03-09
+
++ Trying to poke around with gps coordinates, gave up because its too time consuming for this capstone project
+
+```{r}
+library(plotKML)
+library(ggplot2)
+install.packages("ggmap")
+library(ggmap)
+library(RColorBrewer)
+```
+```{r}
+all_trips_v5 %>% 
+  filter(geodist == 0) %>%
+ ggplot(aes(x = start_lng, y = start_lat)) +
+  coord_quickmap() +
+  geom_point()
+
+all_trips_v5 %>% 
+ ggplot(aes(x = start_lng, y = start_lat)) +
+  coord_quickmap() +
+  geom_point()
+```
+## 2023-03-10
+
++ Trying to find out if speed is plausible and filter out outliers
+
+```{r}
+
+nrow(all_trips_v4[all_trips_v4$geodist > 30000,])
+
+summary(all_trips_v4$geodist)
+
+View(all_trips_v4[all_trips_v4$geodist > 30000,])
+
+temp <- all_trips_v4 %>% 
+  mutate(speed = geodist / ride_length) %>%
+  filter(speed < 30)
+
+
+
+all_trips_v4 %>% 
+  mutate(speed = geodist / ride_length) %>%
+  filter(speed > 15)
+
+all_trips_v5 <- all_trips_v4 %>% 
+  mutate(speed = geodist / ride_length) %>%
+  filter(speed < 10)
+
+
+sd(temp$speed)
+
+sd(all_trips_v5$speed)
+
+summary(all_trips_v5$speed)
+
+hist(all_trips_v5$speed,breaks=20)
+hist(temp$speed,breaks=20)
+```
+
+
+## 2023-03-15
+
++ Tried to find out at which ride length there is the biggest difference between members and casual users, its around 11 minutes
+
+
+```{r}
+variation <- data.frame(threshhold=integer(),
+                        casual_percentage=double(),
+                        member_percentage=double()
+                        )
+for ( i in seq(60,12000,60)) {
+  new <- c(i,
+            nrow(all_trips_v5[all_trips_v5$member_casual == "casual" & all_trips_v5$ride_length > i,]) / nrow(all_trips_v5[all_trips_v5$member_casual == "casual",]),
+            nrow(all_trips_v5[all_trips_v5$member_casual == "member" & all_trips_v5$ride_length > i,]) / nrow(all_trips_v5[all_trips_v5$member_casual == "member",]))
+  variation[nrow(variation) + 1,] <- new
+}
+
+variation_smaller <- data.frame(threshhold=integer(),
+                        casual_percentage=double(),
+                        member_percentage=double()
+                        )
+for ( i in seq(60,12000,60)) {
+  new <- c(i,
+            nrow(all_trips_v5[all_trips_v5$member_casual == "casual" & all_trips_v5$ride_length < i,]) / nrow(all_trips_v5[all_trips_v5$member_casual == "casual",]),
+            nrow(all_trips_v5[all_trips_v5$member_casual == "member" & all_trips_v5$ride_length < i,]) / nrow(all_trips_v5[all_trips_v5$member_casual == "member",]))
+  variation_smaller[nrow(variation_smaller) + 1,] <- new
+}
+
+ggplot(variation, aes(x=threshhold)) + 
+ # geom_line(aes(y = casual_percentage), color = "darkred") + 
+#  geom_line(aes(y = member_percentage), color="steelblue", linetype="twodash") +
+  geom_line(aes(y = casual_percentage-member_percentage), color="black", linetype="twodash")+ xlim(500,1000)
+
+ggplot(variation_smaller, aes(x=threshhold)) + 
+  geom_line(aes(y = casual_percentage), color = "darkred") + 
+  geom_line(aes(y = member_percentage), color="steelblue", linetype="twodash") +
+  geom_line(aes(y = casual_percentage-member_percentage), color="black", linetype="twodash")
+#+
+# xlim(500,1000)
+
+nrow(all_trips_v5[all_trips_v5$member_casual == "casual" & all_trips_v5$ride_length < 120,]) / nrow(all_trips_v5[all_trips_v5$member_casual == "casual",])
+```
+
++ misc backup of old visualizations
+
+```{r}
+all_trips_v5 %>% 
+  filter(day_of_week != "Saturday" | day_of_week != "Sunday" ) %>%
+  ggplot( aes(x = date, fill = member_casual)) +
+  geom_density(alpha = .3) +
+  scale_fill_manual(values=cbPaletteMin) +
+  labs(y = NULL, x = NULL, fill = NULL)
+
+
+all_trips_v5 %>% 
+  filter(day_of_week == "Saturday" | day_of_week == "Sunday" ) %>%
+  ggplot( aes(x = date, fill = member_casual)) +
+  geom_density(alpha = .3) +
+  scale_fill_manual(values=cbPaletteMin) +
+  labs(y = NULL, x = NULL, fill = NULL)
+
+
+all_trips_v5 %>% 
+  filter(day_of_week == "Saturday" | day_of_week == "Sunday" ) %>%
+  group_by(member_casual, hours) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, hours)  %>% 
+  ggplot( aes(x = hours, y = number_of_rides / 1000, fill = member_casual)) +
+  geom_col(position = "dodge") + 
+  scale_fill_manual(values=cbPaletteMin) +
+  labs(y = "number of rides in thousands", x = NULL, fill = NULL)
+
+all_trips_v5 %>% 
+  filter(day_of_week != "Saturday" | day_of_week != "Sunday" ) %>%
+  group_by(member_casual, hours) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, hours)  %>% 
+  ggplot( aes(x = hours, y = number_of_rides / 1000, fill = member_casual)) +
+  geom_col(position = "dodge") + 
+  scale_fill_manual(values=cbPaletteMin) +
+  labs(y = "number of rides in thousands", x = NULL, fill = NULL)
+
+
+```
+
+## 2023-03-20
+
+* Tried visualizing usage by hour of the day as a radar chart, ultimately, I think the barchart is clearer and easier to understand
+
+
+```{r}
+install.packages("fmsb")
+library(fmsb)
+
+
+members_numrides <- all_trips_v5 %>% 
+  filter(member_casual=="member") %>%
+  group_by(group = as.numeric(hours) ) %>%
+  summarise(number_of_rides = n()) 
+casuals_numrides <- all_trips_v5 %>% 
+  filter(member_casual=="casual") %>%
+  group_by(group = as.numeric(hours) ) %>%
+  summarise(number_of_rides = n()) 
+
+numrides_by_hour <- data.frame("00"=integer(),
+                        "01"=integer(),
+                        "02"=integer(),
+                        "03"=integer(),
+                        "04"=integer(),
+                        "05"=integer(),
+                        "06"=integer(),
+                        "07"=integer(),
+                        "08"=integer(),
+                        "09"=integer(),
+                        "10"=integer(),
+                        "11"=integer(),
+                        "12"=integer(),
+                        "13"=integer(),
+                        "14"=integer(),
+                        "15"=integer(),
+                        "16"=integer(),
+                        "17"=integer(),
+                        "18"=integer(),
+                        "19"=integer(),
+                        "20"=integer(),
+                        "21"=integer(),
+                        "22"=integer(),
+                        "23"=integer()
+                        )
+
+if (max(t(members_numrides)[2,]) > max(t(casuals_numrides)[2,])) {
+  numrides_by_hour[nrow(numrides_by_hour) + 1,] <- rep(max(t(members_numrides)[2,]),ncol(numrides_by_hour))  
+} else {
+  numrides_by_hour[nrow(numrides_by_hour) + 1,] <- rep(max(t(casuals_numrides)[2,]),ncol(numrides_by_hour))
+}
+
+#if (min(t(members_numrides)[2,]) < min(t(casuals_numrides)[2,])) {
+#  numrides_by_hour[nrow(numrides_by_hour) + 1,] <- rep(min(t(members_numrides)[2,]),ncol(numrides_by_hour))  
+#} else {
+#  numrides_by_hour[nrow(numrides_by_hour) + 1,] <- rep(min(t(casuals_numrides)[2,]),ncol(numrides_by_hour))
+#}
+numrides_by_hour[nrow(numrides_by_hour) + 1,] <- rep(0,ncol(numrides_by_hour))
+
+numrides_by_hour[nrow(numrides_by_hour) + 1,] <- t(members_numrides)[2,]
+numrides_by_hour[nrow(numrides_by_hour) + 1,] <- t(casuals_numrides)[2,]
+
+
+radarchart(numrides_by_hour)
+
+variation[nrow(variation)+1,] <- (rep(max(tempos),24))
+
+variation[nrow(variation)+1,] <- (rep(min(tempos),24))
+
+variation[nrow(variation)+1,] <- (tempos[2,])
+
+tempost=as.data.frame(tempos[2,])
+
+radarchart(variation)  
+  
+```
+
+* Tried visualizing the correlation of temperature and usage
+
+```{r}
+
+dates_vline <- as.Date(c("2022-01-17","2022-02-12","2022-02-21","2022-03-07","2022-05-30","2022-06-19","2022-07-04","2022-09-05","2022-10-10"))      
+dates_vline <- which(all_trips_v5$date %in% dates_vline)
+
+
+all_trips_v5 %>% 
+  ggplot() +
+#  geom_line(data = climate_chicago_202110_202210, aes(x = date, y = avgtemp / 20000), color = "red", linetype = "dashed",alpha=.5) +
+  geom_smooth(data = climate_chicago_202110_202210, aes(x = date, y = avgtemp / 20000),method=loess,color="#D55E00") +
+  geom_density( aes(x = date,fill = member_casual),alpha = .3) +
+  scale_fill_manual(values=cbPaletteMin) +
+  labs(y = NULL, x = NULL, fill = NULL)
+ # geom_vline(xintercept = as.numeric(all_trips_v5$date[dates_vline]), col = "red", lwd = 0.4)
+  
+  
+  ggplot() +
+  geom_line( aes(x = climate_chicago_202110_202210$date, y = climate_chicago_202110_202210$avgtemp))
+
+  
+  
+
+#  geom_line(data = climate_chicago_202110_202210,  aes(x = date, y = avgtemp / 20000)) +
+
+```

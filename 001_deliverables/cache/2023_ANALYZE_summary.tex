@@ -1,0 +1,956 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+  \setmainfont[]{Bahnschrift:style=Bold}
+  \setmonofont[]{Bahnschrift:style=Condensed}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Analysis of Cyclistic Data},
+  pdfauthor={Michael-Philipp Stiebing},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Analysis of Cyclistic Data}
+\author{Michael-Philipp Stiebing}
+\date{2023-03-02}
+
+\begin{document}
+\maketitle
+
+\fontsize{10}{12}
+\selectfont
+
+\hypertarget{starting-with-processed-dataframe-all_trips_v5}{%
+\section{Starting with processed dataframe
+all\_trips\_v5}\label{starting-with-processed-dataframe-all_trips_v5}}
+
+\begin{itemize}
+\tightlist
+\item
+  Conduct descriptive analysis as per script
+\end{itemize}
+
+\fontsize{9}{11}
+\selectfont
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Descriptive analysis on ride\_length (all figures in seconds)}
+\FunctionTok{mean}\NormalTok{(all\_trips\_v5}\SpecialCharTok{$}\NormalTok{ride\_length) }\CommentTok{\#straight average (total ride length / rides)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 998.9599
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{median}\NormalTok{(all\_trips\_v5}\SpecialCharTok{$}\NormalTok{ride\_length) }\CommentTok{\#midpoint number in the ascending array of ride lengths}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 634
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{max}\NormalTok{(all\_trips\_v5}\SpecialCharTok{$}\NormalTok{ride\_length) }\CommentTok{\#longest ride}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 86391
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{min}\NormalTok{(all\_trips\_v5}\SpecialCharTok{$}\NormalTok{ride\_length) }\CommentTok{\#shortest ride}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 61
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# You can condense the four lines above to one line using summary() on the specific attribute}
+\FunctionTok{summary}\NormalTok{(all\_trips\_v5}\SpecialCharTok{$}\NormalTok{ride\_length)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##      61     366     634     999    1129   86391
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Compare members and casual users}
+\FunctionTok{aggregate}\NormalTok{(all\_trips\_v5}\SpecialCharTok{$}\NormalTok{ride\_length }\SpecialCharTok{\textasciitilde{}}\NormalTok{ all\_trips\_v5}\SpecialCharTok{$}\NormalTok{member\_casual, }\AttributeTok{FUN =}\NormalTok{ mean)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   all_trips_v5$member_casual all_trips_v5$ride_length
+## 1                     casual                1346.5537
+## 2                     member                 758.8174
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{aggregate}\NormalTok{(all\_trips\_v5}\SpecialCharTok{$}\NormalTok{ride\_length }\SpecialCharTok{\textasciitilde{}}\NormalTok{ all\_trips\_v5}\SpecialCharTok{$}\NormalTok{member\_casual, }\AttributeTok{FUN =}\NormalTok{ median)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   all_trips_v5$member_casual all_trips_v5$ride_length
+## 1                     casual                      808
+## 2                     member                      540
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{aggregate}\NormalTok{(all\_trips\_v5}\SpecialCharTok{$}\NormalTok{ride\_length }\SpecialCharTok{\textasciitilde{}}\NormalTok{ all\_trips\_v5}\SpecialCharTok{$}\NormalTok{member\_casual, }\AttributeTok{FUN =}\NormalTok{ max)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   all_trips_v5$member_casual all_trips_v5$ride_length
+## 1                     casual                    86391
+## 2                     member                    86180
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{aggregate}\NormalTok{(all\_trips\_v5}\SpecialCharTok{$}\NormalTok{ride\_length }\SpecialCharTok{\textasciitilde{}}\NormalTok{ all\_trips\_v5}\SpecialCharTok{$}\NormalTok{member\_casual, }\AttributeTok{FUN =}\NormalTok{ min)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   all_trips_v5$member_casual all_trips_v5$ride_length
+## 1                     casual                       61
+## 2                     member                       61
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# See the average ride time by each day for members vs casual users}
+\FunctionTok{aggregate}\NormalTok{(all\_trips\_v5}\SpecialCharTok{$}\NormalTok{ride\_length }\SpecialCharTok{\textasciitilde{}}\NormalTok{ all\_trips\_v5}\SpecialCharTok{$}\NormalTok{member\_casual }\SpecialCharTok{+}\NormalTok{ all\_trips\_v5}\SpecialCharTok{$}\NormalTok{day\_of\_week, }\AttributeTok{FUN =}\NormalTok{ mean)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    all_trips_v5$member_casual all_trips_v5$day_of_week all_trips_v5$ride_length
+## 1                      casual                   Friday                1261.1652
+## 2                      member                   Friday                 745.0343
+## 3                      casual                   Monday                1366.7836
+## 4                      member                   Monday                 731.2731
+## 5                      casual                 Saturday                1503.8461
+## 6                      member                 Saturday                 848.3125
+## 7                      casual                   Sunday                1545.3593
+## 8                      member                   Sunday                 841.4815
+## 9                      casual                 Thursday                1185.8862
+## 10                     member                 Thursday                 728.3687
+## 11                     casual                  Tuesday                1205.8529
+## 12                     member                  Tuesday                 721.9373
+## 13                     casual                Wednesday                1161.0311
+## 14                     member                Wednesday                 721.9887
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Notice that the days of the week are out of order. Let\textquotesingle{}s fix that.}
+\NormalTok{all\_trips\_v5}\SpecialCharTok{$}\NormalTok{day\_of\_week }\OtherTok{\textless{}{-}} \FunctionTok{ordered}\NormalTok{(all\_trips\_v5}\SpecialCharTok{$}\NormalTok{day\_of\_week, }\AttributeTok{levels=}\FunctionTok{c}\NormalTok{(}\StringTok{"Sunday"}\NormalTok{, }\StringTok{"Monday"}\NormalTok{, }\StringTok{"Tuesday"}\NormalTok{, }\StringTok{"Wednesday"}\NormalTok{, }\StringTok{"Thursday"}\NormalTok{, }\StringTok{"Friday"}\NormalTok{, }\StringTok{"Saturday"}\NormalTok{))}
+
+
+\CommentTok{\# Now, let\textquotesingle{}s run the average ride time by each day for members vs casual users}
+\FunctionTok{aggregate}\NormalTok{(all\_trips\_v5}\SpecialCharTok{$}\NormalTok{ride\_length }\SpecialCharTok{\textasciitilde{}}\NormalTok{ all\_trips\_v5}\SpecialCharTok{$}\NormalTok{member\_casual }\SpecialCharTok{+}\NormalTok{ all\_trips\_v5}\SpecialCharTok{$}\NormalTok{day\_of\_week, }\AttributeTok{FUN =}\NormalTok{ mean)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    all_trips_v5$member_casual all_trips_v5$day_of_week all_trips_v5$ride_length
+## 1                      casual                   Sunday                1545.3593
+## 2                      member                   Sunday                 841.4815
+## 3                      casual                   Monday                1366.7836
+## 4                      member                   Monday                 731.2731
+## 5                      casual                  Tuesday                1205.8529
+## 6                      member                  Tuesday                 721.9373
+## 7                      casual                Wednesday                1161.0311
+## 8                      member                Wednesday                 721.9887
+## 9                      casual                 Thursday                1185.8862
+## 10                     member                 Thursday                 728.3687
+## 11                     casual                   Friday                1261.1652
+## 12                     member                   Friday                 745.0343
+## 13                     casual                 Saturday                1503.8461
+## 14                     member                 Saturday                 848.3125
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# analyze ridership data by type and weekday}
+\NormalTok{all\_trips\_v5 }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{weekday =} \FunctionTok{wday}\NormalTok{(started\_at, }\AttributeTok{label =} \ConstantTok{TRUE}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}  \CommentTok{\#creates weekday field using wday()}
+  \FunctionTok{group\_by}\NormalTok{(member\_casual, weekday) }\SpecialCharTok{\%\textgreater{}\%}  \CommentTok{\#groups by usertype and weekday}
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{number\_of\_rides =} \FunctionTok{n}\NormalTok{()                                                        }\CommentTok{\#calculates the number of rides and average duration }
+\NormalTok{  ,}\AttributeTok{average\_duration =} \FunctionTok{mean}\NormalTok{(ride\_length)) }\SpecialCharTok{\%\textgreater{}\%}                 \CommentTok{\# calculates the average duration}
+  \FunctionTok{arrange}\NormalTok{(member\_casual, weekday)                                                                }\CommentTok{\# sorts}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `summarise()` has grouped output by 'member_casual'. You can override using the
+## `.groups` argument.
+\end{verbatim}
+
+\begin{verbatim}
+## # A tibble: 14 x 4
+## # Groups:   member_casual [2]
+##    member_casual weekday number_of_rides average_duration
+##    <chr>         <ord>             <int>            <dbl>
+##  1 casual        Sun              439601            1545.
+##  2 casual        Mon              300340            1367.
+##  3 casual        Tue              285059            1206.
+##  4 casual        Wed              295860            1161.
+##  5 casual        Thu              322175            1186.
+##  6 casual        Fri              370221            1261.
+##  7 casual        Sat              539769            1504.
+##  8 member        Sun              433825             841.
+##  9 member        Mon              520207             731.
+## 10 member        Tue              569216             722.
+## 11 member        Wed              575028             722.
+## 12 member        Thu              567557             728.
+## 13 member        Fri              524988             745.
+## 14 member        Sat              504550             848.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Let\textquotesingle{}s visualize the number of rides by rider type}
+\NormalTok{all\_trips\_v5 }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{weekday =} \FunctionTok{wday}\NormalTok{(started\_at, }\AttributeTok{label =} \ConstantTok{TRUE}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(member\_casual, weekday) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{number\_of\_rides =} \FunctionTok{n}\NormalTok{()}
+\NormalTok{            ,}\AttributeTok{average\_duration =} \FunctionTok{mean}\NormalTok{(ride\_length)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{arrange}\NormalTok{(member\_casual, weekday)  }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ weekday, }\AttributeTok{y =}\NormalTok{ number\_of\_rides, }\AttributeTok{fill =}\NormalTok{ member\_casual)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_col}\NormalTok{(}\AttributeTok{position =} \StringTok{"dodge"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `summarise()` has grouped output by 'member_casual'. You can override using the
+## `.groups` argument.
+\end{verbatim}
+
+\includegraphics{2023_ANALYZE_summary_files/figure-latex/unnamed-chunk-1-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Let\textquotesingle{}s create a visualization for average duration}
+\NormalTok{all\_trips\_v5 }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{weekday =} \FunctionTok{wday}\NormalTok{(started\_at, }\AttributeTok{label =} \ConstantTok{TRUE}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(member\_casual, weekday) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{number\_of\_rides =} \FunctionTok{n}\NormalTok{()}
+\NormalTok{            ,}\AttributeTok{average\_duration =} \FunctionTok{mean}\NormalTok{(ride\_length)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{arrange}\NormalTok{(member\_casual, weekday)  }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ weekday, }\AttributeTok{y =}\NormalTok{ average\_duration, }\AttributeTok{fill =}\NormalTok{ member\_casual)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_col}\NormalTok{(}\AttributeTok{position =} \StringTok{"dodge"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `summarise()` has grouped output by 'member_casual'. You can override using the
+## `.groups` argument.
+\end{verbatim}
+
+\includegraphics{2023_ANALYZE_summary_files/figure-latex/unnamed-chunk-1-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#mean(round\_trips$ride\_length)}
+
+\CommentTok{\#mean(all\_trips\_v5[all\_trips\_v5$geodist\textless{}=0, \textquotesingle{}ride\_length\textquotesingle{}])}
+
+\CommentTok{\#mean(filter(all\_trips\_v5,geodist == 0)$ride\_length)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Descriptive analysis on ride\_length (all figures in seconds)}
+\FunctionTok{mean}\NormalTok{(}\FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{ride\_length) }\CommentTok{\#straight average (total ride length / rides)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1725.811
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{median}\NormalTok{(}\FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{ride\_length) }\CommentTok{\#midpoint number in the ascending array of ride lengths}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 818
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{max}\NormalTok{(}\FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{ride\_length) }\CommentTok{\#longest ride}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 86329
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{min}\NormalTok{(}\FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{ride\_length) }\CommentTok{\#shortest ride}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 61
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# You can condense the four lines above to one line using summary() on the specific attribute}
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{ride\_length)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##    61.0   214.2   818.0  1725.8  2191.0 86329.0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Compare members and casual users}
+\FunctionTok{aggregate}\NormalTok{(}\FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{ride\_length }\SpecialCharTok{\textasciitilde{}} \FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{member\_casual, }\AttributeTok{FUN =}\NormalTok{ mean)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   filter(all_trips_v5, geodist == 0)$member_casual
+## 1                                           casual
+## 2                                           member
+##   filter(all_trips_v5, geodist == 0)$ride_length
+## 1                                      2322.7035
+## 2                                       936.9457
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{aggregate}\NormalTok{(}\FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{ride\_length }\SpecialCharTok{\textasciitilde{}} \FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{member\_casual, }\AttributeTok{FUN =}\NormalTok{ median)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   filter(all_trips_v5, geodist == 0)$member_casual
+## 1                                           casual
+## 2                                           member
+##   filter(all_trips_v5, geodist == 0)$ride_length
+## 1                                           1349
+## 2                                            401
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{aggregate}\NormalTok{(}\FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{ride\_length }\SpecialCharTok{\textasciitilde{}} \FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{member\_casual, }\AttributeTok{FUN =}\NormalTok{ max)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   filter(all_trips_v5, geodist == 0)$member_casual
+## 1                                           casual
+## 2                                           member
+##   filter(all_trips_v5, geodist == 0)$ride_length
+## 1                                          86329
+## 2                                          85136
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{aggregate}\NormalTok{(}\FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{ride\_length }\SpecialCharTok{\textasciitilde{}} \FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{member\_casual, }\AttributeTok{FUN =}\NormalTok{ min)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   filter(all_trips_v5, geodist == 0)$member_casual
+## 1                                           casual
+## 2                                           member
+##   filter(all_trips_v5, geodist == 0)$ride_length
+## 1                                             61
+## 2                                             61
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# See the average ride time by each day for members vs casual users}
+\FunctionTok{aggregate}\NormalTok{(}\FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{ride\_length }\SpecialCharTok{\textasciitilde{}} \FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{member\_casual }\SpecialCharTok{+} \FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{day\_of\_week, }\AttributeTok{FUN =}\NormalTok{ mean)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    filter(all_trips_v5, geodist == 0)$member_casual
+## 1                                            casual
+## 2                                            member
+## 3                                            casual
+## 4                                            member
+## 5                                            casual
+## 6                                            member
+## 7                                            casual
+## 8                                            member
+## 9                                            casual
+## 10                                           member
+## 11                                           casual
+## 12                                           member
+## 13                                           casual
+## 14                                           member
+##    filter(all_trips_v5, geodist == 0)$day_of_week
+## 1                                          Sunday
+## 2                                          Sunday
+## 3                                          Monday
+## 4                                          Monday
+## 5                                         Tuesday
+## 6                                         Tuesday
+## 7                                       Wednesday
+## 8                                       Wednesday
+## 9                                        Thursday
+## 10                                       Thursday
+## 11                                         Friday
+## 12                                         Friday
+## 13                                       Saturday
+## 14                                       Saturday
+##    filter(all_trips_v5, geodist == 0)$ride_length
+## 1                                       2559.3728
+## 2                                       1059.8977
+## 3                                       2421.0331
+## 4                                        940.2018
+## 5                                       2189.9315
+## 6                                        899.6108
+## 7                                       2144.9871
+## 8                                        887.2209
+## 9                                       2141.5593
+## 10                                       882.4784
+## 11                                      2107.7701
+## 12                                       890.4508
+## 13                                      2426.2851
+## 14                                      1007.8698
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Notice that the days of the week are out of order. Let\textquotesingle{}s fix that.}
+\CommentTok{\#filter(all\_trips\_v5,geodist == 0)$day\_of\_week \textless{}{-} ordered(filter(all\_trips\_v5,geodist == 0)$day\_of\_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))}
+
+
+\CommentTok{\# Now, let\textquotesingle{}s run the average ride time by each day for members vs casual users}
+\FunctionTok{aggregate}\NormalTok{(}\FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{ride\_length }\SpecialCharTok{\textasciitilde{}} \FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{member\_casual }\SpecialCharTok{+} \FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{)}\SpecialCharTok{$}\NormalTok{day\_of\_week, }\AttributeTok{FUN =}\NormalTok{ mean)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    filter(all_trips_v5, geodist == 0)$member_casual
+## 1                                            casual
+## 2                                            member
+## 3                                            casual
+## 4                                            member
+## 5                                            casual
+## 6                                            member
+## 7                                            casual
+## 8                                            member
+## 9                                            casual
+## 10                                           member
+## 11                                           casual
+## 12                                           member
+## 13                                           casual
+## 14                                           member
+##    filter(all_trips_v5, geodist == 0)$day_of_week
+## 1                                          Sunday
+## 2                                          Sunday
+## 3                                          Monday
+## 4                                          Monday
+## 5                                         Tuesday
+## 6                                         Tuesday
+## 7                                       Wednesday
+## 8                                       Wednesday
+## 9                                        Thursday
+## 10                                       Thursday
+## 11                                         Friday
+## 12                                         Friday
+## 13                                       Saturday
+## 14                                       Saturday
+##    filter(all_trips_v5, geodist == 0)$ride_length
+## 1                                       2559.3728
+## 2                                       1059.8977
+## 3                                       2421.0331
+## 4                                        940.2018
+## 5                                       2189.9315
+## 6                                        899.6108
+## 7                                       2144.9871
+## 8                                        887.2209
+## 9                                       2141.5593
+## 10                                       882.4784
+## 11                                      2107.7701
+## 12                                       890.4508
+## 13                                      2426.2851
+## 14                                      1007.8698
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# analyze ridership data by type and weekday}
+\FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{weekday =} \FunctionTok{wday}\NormalTok{(started\_at, }\AttributeTok{label =} \ConstantTok{TRUE}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}  \CommentTok{\#creates weekday field using wday()}
+  \FunctionTok{group\_by}\NormalTok{(member\_casual, weekday) }\SpecialCharTok{\%\textgreater{}\%}  \CommentTok{\#groups by usertype and weekday}
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{number\_of\_rides =} \FunctionTok{n}\NormalTok{()                                                        }\CommentTok{\#calculates the number of rides and average duration }
+\NormalTok{  ,}\AttributeTok{average\_duration =} \FunctionTok{mean}\NormalTok{(ride\_length)) }\SpecialCharTok{\%\textgreater{}\%}                 \CommentTok{\# calculates the average duration}
+  \FunctionTok{arrange}\NormalTok{(member\_casual, weekday)                                                                }\CommentTok{\# sorts}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `summarise()` has grouped output by 'member_casual'. You can override using the
+## `.groups` argument.
+\end{verbatim}
+
+\begin{verbatim}
+## # A tibble: 14 x 4
+## # Groups:   member_casual [2]
+##    member_casual weekday number_of_rides average_duration
+##    <chr>         <ord>             <int>            <dbl>
+##  1 casual        Sun               32049            2559.
+##  2 casual        Mon               21330            2421.
+##  3 casual        Tue               17116            2190.
+##  4 casual        Wed               17018            2145.
+##  5 casual        Thu               18485            2142.
+##  6 casual        Fri               21445            2108.
+##  7 casual        Sat               34487            2426.
+##  8 member        Sun               16564            1060.
+##  9 member        Mon               17766             940.
+## 10 member        Tue               17598             900.
+## 11 member        Wed               17467             887.
+## 12 member        Thu               18027             882.
+## 13 member        Fri               17685             890.
+## 14 member        Sat               17417            1008.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Let\textquotesingle{}s visualize the number of rides by rider type}
+\FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{weekday =} \FunctionTok{wday}\NormalTok{(started\_at, }\AttributeTok{label =} \ConstantTok{TRUE}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(member\_casual, weekday) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{number\_of\_rides =} \FunctionTok{n}\NormalTok{()}
+\NormalTok{            ,}\AttributeTok{average\_duration =} \FunctionTok{mean}\NormalTok{(ride\_length)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{arrange}\NormalTok{(member\_casual, weekday)  }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ weekday, }\AttributeTok{y =}\NormalTok{ number\_of\_rides, }\AttributeTok{fill =}\NormalTok{ member\_casual)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_col}\NormalTok{(}\AttributeTok{position =} \StringTok{"dodge"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `summarise()` has grouped output by 'member_casual'. You can override using the
+## `.groups` argument.
+\end{verbatim}
+
+\includegraphics{2023_ANALYZE_summary_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Let\textquotesingle{}s create a visualization for average duration}
+\FunctionTok{filter}\NormalTok{(all\_trips\_v5,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{weekday =} \FunctionTok{wday}\NormalTok{(started\_at, }\AttributeTok{label =} \ConstantTok{TRUE}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(member\_casual, weekday) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{number\_of\_rides =} \FunctionTok{n}\NormalTok{()}
+\NormalTok{            ,}\AttributeTok{average\_duration =} \FunctionTok{mean}\NormalTok{(ride\_length)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{arrange}\NormalTok{(member\_casual, weekday)  }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ weekday, }\AttributeTok{y =}\NormalTok{ average\_duration, }\AttributeTok{fill =}\NormalTok{ member\_casual)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_col}\NormalTok{(}\AttributeTok{position =} \StringTok{"dodge"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `summarise()` has grouped output by 'member_casual'. You can override using the
+## `.groups` argument.
+\end{verbatim}
+
+\includegraphics{2023_ANALYZE_summary_files/figure-latex/unnamed-chunk-3-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{short\_ride }\OtherTok{\textless{}{-}}\NormalTok{ (}\FunctionTok{filter}\NormalTok{(all\_trips\_v5,ride\_length }\SpecialCharTok{\textless{}} \DecValTok{86400} \SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(geodist)))}
+\NormalTok{long\_ride }\OtherTok{\textless{}{-}}\NormalTok{ (}\FunctionTok{filter}\NormalTok{(all\_trips\_v5,ride\_length }\SpecialCharTok{\textgreater{}} \DecValTok{86400} \SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(geodist)))}
+\NormalTok{nadist\_ride }\OtherTok{\textless{}{-}}\NormalTok{ (}\FunctionTok{filter}\NormalTok{(all\_trips\_v5,}\FunctionTok{is.na}\NormalTok{(geodist)))}
+
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{filter}\NormalTok{(short\_ride)}\SpecialCharTok{$}\NormalTok{ride\_length)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##      61     366     634     999    1129   86391
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{filter}\NormalTok{(long\_ride)}\SpecialCharTok{$}\NormalTok{ride\_length)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+## 
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(}\FunctionTok{filter}\NormalTok{(nadist\_ride)}\SpecialCharTok{$}\NormalTok{ride\_length)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+## 
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Let\textquotesingle{}s visualize the number of rides by rider type}
+\FunctionTok{filter}\NormalTok{(short\_ride,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{weekday =} \FunctionTok{wday}\NormalTok{(started\_at, }\AttributeTok{label =} \ConstantTok{TRUE}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(member\_casual, weekday) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{number\_of\_rides =} \FunctionTok{n}\NormalTok{()}
+\NormalTok{            ,}\AttributeTok{average\_duration =} \FunctionTok{mean}\NormalTok{(ride\_length)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{arrange}\NormalTok{(member\_casual, weekday)  }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ weekday, }\AttributeTok{y =}\NormalTok{ number\_of\_rides, }\AttributeTok{fill =}\NormalTok{ member\_casual)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_col}\NormalTok{(}\AttributeTok{position =} \StringTok{"dodge"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `summarise()` has grouped output by 'member_casual'. You can override using the
+## `.groups` argument.
+\end{verbatim}
+
+\includegraphics{2023_ANALYZE_summary_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Let\textquotesingle{}s create a visualization for average duration}
+\FunctionTok{filter}\NormalTok{(short\_ride,geodist }\SpecialCharTok{==} \DecValTok{0}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{weekday =} \FunctionTok{wday}\NormalTok{(started\_at, }\AttributeTok{label =} \ConstantTok{TRUE}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(member\_casual, weekday) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{number\_of\_rides =} \FunctionTok{n}\NormalTok{()}
+\NormalTok{            ,}\AttributeTok{average\_duration =} \FunctionTok{mean}\NormalTok{(ride\_length)) }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{arrange}\NormalTok{(member\_casual, weekday)  }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ weekday, }\AttributeTok{y =}\NormalTok{ average\_duration, }\AttributeTok{fill =}\NormalTok{ member\_casual)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_col}\NormalTok{(}\AttributeTok{position =} \StringTok{"dodge"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `summarise()` has grouped output by 'member_casual'. You can override using the
+## `.groups` argument.
+\end{verbatim}
+
+\includegraphics{2023_ANALYZE_summary_files/figure-latex/unnamed-chunk-4-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{nrow}\NormalTok{(all\_trips\_v5[all\_trips\_v5}\SpecialCharTok{$}\NormalTok{member\_casual }\SpecialCharTok{==} \StringTok{"casual"}\NormalTok{,])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 2553025
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{nrow}\NormalTok{(all\_trips\_v5[all\_trips\_v5}\SpecialCharTok{$}\NormalTok{member\_casual }\SpecialCharTok{==} \StringTok{"member"}\NormalTok{,])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 3695371
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#nrow(all\_trips\_v5[all\_trips\_v5$member\_casual == "casual" \& all\_trips\_v5$ride\_length \textgreater{} 2700,])}
+\FunctionTok{nrow}\NormalTok{(all\_trips\_v5[all\_trips\_v5}\SpecialCharTok{$}\NormalTok{member\_casual }\SpecialCharTok{==} \StringTok{"casual"} \SpecialCharTok{\&}\NormalTok{ all\_trips\_v5}\SpecialCharTok{$}\NormalTok{ride\_length }\SpecialCharTok{\textgreater{}} \DecValTok{2700}\NormalTok{,]) }\SpecialCharTok{/} \FunctionTok{nrow}\NormalTok{(all\_trips\_v5[all\_trips\_v5}\SpecialCharTok{$}\NormalTok{member\_casual }\SpecialCharTok{==} \StringTok{"casual"}\NormalTok{,])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.1008094
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{nrow}\NormalTok{(all\_trips\_v5[all\_trips\_v5}\SpecialCharTok{$}\NormalTok{member\_casual }\SpecialCharTok{==} \StringTok{"member"} \SpecialCharTok{\&}\NormalTok{ all\_trips\_v5}\SpecialCharTok{$}\NormalTok{ride\_length }\SpecialCharTok{\textgreater{}} \DecValTok{2700}\NormalTok{,]) }\SpecialCharTok{/} \FunctionTok{nrow}\NormalTok{(all\_trips\_v5[all\_trips\_v5}\SpecialCharTok{$}\NormalTok{member\_casual }\SpecialCharTok{==} \StringTok{"member"}\NormalTok{,])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.01653609
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{nrow}\NormalTok{(all\_trips\_v5[all\_trips\_v5}\SpecialCharTok{$}\NormalTok{member\_casual }\SpecialCharTok{==} \StringTok{"casual"} \SpecialCharTok{\&}\NormalTok{ all\_trips\_v5}\SpecialCharTok{$}\NormalTok{ride\_length }\SpecialCharTok{\textgreater{}} \DecValTok{10800}\NormalTok{,]) }\SpecialCharTok{/} \FunctionTok{nrow}\NormalTok{(all\_trips\_v5[all\_trips\_v5}\SpecialCharTok{$}\NormalTok{member\_casual }\SpecialCharTok{==} \StringTok{"casual"}\NormalTok{,])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.004855025
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all\_trips\_v5 }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(month, member\_casual) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{cascount =} \FunctionTok{sum}\NormalTok{(member\_casual }\SpecialCharTok{==} \StringTok{"casual"}\NormalTok{), }\AttributeTok{memcount =} \FunctionTok{sum}\NormalTok{(member\_casual }\SpecialCharTok{==} \StringTok{"member"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `summarise()` has grouped output by 'month'. You can override using the
+## `.groups` argument.
+\end{verbatim}
+
+\begin{verbatim}
+## # A tibble: 24 x 4
+## # Groups:   month [12]
+##    month member_casual cascount memcount
+##    <chr> <chr>            <int>    <int>
+##  1 01    casual           18069        0
+##  2 01    member               0    83700
+##  3 02    casual           20900        0
+##  4 02    member               0    91984
+##  5 03    casual           88033        0
+##  6 03    member               0   190401
+##  7 04    casual          123721        0
+##  8 04    member               0   239611
+##  9 05    casual          274367        0
+## 10 05    member               0   347015
+## # ... with 14 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all\_trips\_v5 }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{group\_by}\NormalTok{(month, member\_casual) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarize}\NormalTok{(}\AttributeTok{cascount =} \FunctionTok{sum}\NormalTok{(member\_casual }\SpecialCharTok{==} \StringTok{"casual"}\NormalTok{), }\AttributeTok{memcount =} \FunctionTok{sum}\NormalTok{(member\_casual }\SpecialCharTok{==} \StringTok{"member"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{arrange}\NormalTok{(month,cascount,memcount)  }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\NormalTok{month)) }\SpecialCharTok{+} \FunctionTok{geom\_line}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{y=}\NormalTok{memcount), }\AttributeTok{color =} \StringTok{"darkred"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `summarise()` has grouped output by 'month'. You can override using the
+## `.groups` argument.
+\end{verbatim}
+
+\includegraphics{2023_ANALYZE_summary_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{ggplot}\NormalTok{(all\_trips\_v5, }\FunctionTok{aes}\NormalTok{(date, }\AttributeTok{color =}\NormalTok{ member\_casual)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_freqpoly}\NormalTok{(}\AttributeTok{binwidth=}\DecValTok{7}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{2023_ANALYZE_summary_files/figure-latex/unnamed-chunk-5-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all\_trips\_v5 }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(day\_of\_week }\SpecialCharTok{==} \StringTok{"Saturday"} \SpecialCharTok{|}\NormalTok{ day\_of\_week }\SpecialCharTok{==} \StringTok{"Sunday"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+\FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(date, }\AttributeTok{color =}\NormalTok{ member\_casual)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_freqpoly}\NormalTok{(}\AttributeTok{binwidth=}\DecValTok{7}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{2023_ANALYZE_summary_files/figure-latex/unnamed-chunk-5-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all\_trips\_v5 }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(day\_of\_week }\SpecialCharTok{!=} \StringTok{"Saturday"} \SpecialCharTok{|}\NormalTok{ day\_of\_week }\SpecialCharTok{!=} \StringTok{"Sunday"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+\FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(date, }\AttributeTok{color =}\NormalTok{ member\_casual)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_freqpoly}\NormalTok{(}\AttributeTok{binwidth=}\DecValTok{7}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{2023_ANALYZE_summary_files/figure-latex/unnamed-chunk-5-4.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all\_trips\_v5 }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(day\_of\_week }\SpecialCharTok{==} \StringTok{"Monday"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+\FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(date, }\AttributeTok{color =}\NormalTok{ member\_casual)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_freqpoly}\NormalTok{(}\AttributeTok{binwidth=}\DecValTok{7}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{2023_ANALYZE_summary_files/figure-latex/unnamed-chunk-5-5.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all\_trips\_v5 }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(day\_of\_week }\SpecialCharTok{==} \StringTok{"Tuesday"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+\FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(date, }\AttributeTok{color =}\NormalTok{ member\_casual)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_freqpoly}\NormalTok{(}\AttributeTok{binwidth=}\DecValTok{7}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{2023_ANALYZE_summary_files/figure-latex/unnamed-chunk-5-6.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all\_trips\_v5 }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(day\_of\_week }\SpecialCharTok{==} \StringTok{"Wednesday"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+\FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(date, }\AttributeTok{color =}\NormalTok{ member\_casual)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_freqpoly}\NormalTok{(}\AttributeTok{binwidth=}\DecValTok{7}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{2023_ANALYZE_summary_files/figure-latex/unnamed-chunk-5-7.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all\_trips\_v5 }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(day\_of\_week }\SpecialCharTok{==} \StringTok{"Thursday"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+\FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(date, }\AttributeTok{color =}\NormalTok{ member\_casual)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_freqpoly}\NormalTok{(}\AttributeTok{binwidth=}\DecValTok{7}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{2023_ANALYZE_summary_files/figure-latex/unnamed-chunk-5-8.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{all\_trips\_v5 }\SpecialCharTok{\%\textgreater{}\%} 
+  \FunctionTok{filter}\NormalTok{(day\_of\_week }\SpecialCharTok{==} \StringTok{"Friday"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+\FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(date, }\AttributeTok{color =}\NormalTok{ member\_casual)) }\SpecialCharTok{+} 
+  \FunctionTok{geom\_freqpoly}\NormalTok{(}\AttributeTok{binwidth=}\DecValTok{7}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{2023_ANALYZE_summary_files/figure-latex/unnamed-chunk-5-9.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# 2700s \textgreater{} 45 min 10800s \textgreater{} 3 hours}
+\end{Highlighting}
+\end{Shaded}
+
+
+\end{document}

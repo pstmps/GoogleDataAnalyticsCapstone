@@ -1,0 +1,323 @@
+---
+title: "Analysis of Cyclistic Data"
+author: "Michael-Philipp Stiebing"
+date: "2023-03-02"
+output: 
+  pdf_document: 
+    latex_engine: lualatex
+    keep_tex: yes
+mainfont: Bahnschrift:style=Bold
+monofont: Bahnschrift:style=Condensed
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(readr)
+library(geosphere)
+
+setwd("/home/mikiR/remote_transfer/")
+X202110_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202110-divvy-tripdata.csv")
+X202111_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202111-divvy-tripdata.csv")
+X202112_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202112-divvy-tripdata.csv")
+X202201_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202201-divvy-tripdata.csv")
+X202202_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202202-divvy-tripdata.csv")
+X202203_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202203-divvy-tripdata.csv")
+X202204_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202204-divvy-tripdata.csv")
+X202205_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202205-divvy-tripdata.csv")
+X202206_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202206-divvy-tripdata.csv")
+X202207_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202207-divvy-tripdata.csv")
+X202208_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202208-divvy-tripdata.csv")
+X202209_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202209-divvy-tripdata.csv")
+X202210_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202210-divvy-tripdata.csv")
+
+all_trips <- bind_rows(
+                  X202110_divvy_tripdata, X202111_divvy_tripdata, X202112_divvy_tripdata, X202201_divvy_tripdata,
+                  X202202_divvy_tripdata, X202203_divvy_tripdata, X202204_divvy_tripdata, X202205_divvy_tripdata,
+                  X202206_divvy_tripdata, X202207_divvy_tripdata, X202208_divvy_tripdata, X202209_divvy_tripdata, 
+                  X202210_divvy_tripdata)
+
+all_trips$date <- as.Date(all_trips$started_at)
+all_trips$month <- format(as.Date(all_trips$date), "%m")
+all_trips$day <- format(as.Date(all_trips$date), "%d")
+all_trips$year <- format(as.Date(all_trips$date), "%Y")
+all_trips$day_of_week <- format(as.Date(all_trips$date), "%A")
+
+
+all_trips$ride_length <- difftime(all_trips$ended_at,all_trips$started_at)
+all_trips$ride_length <- as.numeric(as.character(all_trips$ride_length))
+
+all_trips_v2 <- all_trips[!(all_trips$ride_length<0),]
+all_trips_errors <- all_trips[(all_trips$ride_length<0),]
+
+all_trips_v3 <- all_trips_v2 %>% 
+              mutate(geodist = distHaversine(
+                    cbind(all_trips_v2$start_lng,all_trips_v2$start_lat), 
+                    cbind(all_trips_v2$end_lng,all_trips_v2$end_lat)))
+
+all_trips_v4 <- (filter(all_trips_v3,ride_length < 86400 & ride_length > 60 & ride_length != 0 & !is.na(geodist)))
+
+all_trips_v5 <- all_trips_v4 %>% 
+  mutate(speed = geodist / ride_length) %>%
+  filter(speed < 10)
+```
+\fontsize{10}{12}
+\selectfont
+
+# Starting with processed dataframe all_trips_v5
+
+* Conduct descriptive analysis as per script
+
+\fontsize{9}{11}
+\selectfont
+```{r}
+
+# Descriptive analysis on ride_length (all figures in seconds)
+mean(all_trips_v5$ride_length) #straight average (total ride length / rides)
+median(all_trips_v5$ride_length) #midpoint number in the ascending array of ride lengths
+max(all_trips_v5$ride_length) #longest ride
+min(all_trips_v5$ride_length) #shortest ride
+
+
+# You can condense the four lines above to one line using summary() on the specific attribute
+summary(all_trips_v5$ride_length)
+
+
+# Compare members and casual users
+aggregate(all_trips_v5$ride_length ~ all_trips_v5$member_casual, FUN = mean)
+aggregate(all_trips_v5$ride_length ~ all_trips_v5$member_casual, FUN = median)
+aggregate(all_trips_v5$ride_length ~ all_trips_v5$member_casual, FUN = max)
+aggregate(all_trips_v5$ride_length ~ all_trips_v5$member_casual, FUN = min)
+
+
+# See the average ride time by each day for members vs casual users
+aggregate(all_trips_v5$ride_length ~ all_trips_v5$member_casual + all_trips_v5$day_of_week, FUN = mean)
+
+
+# Notice that the days of the week are out of order. Let's fix that.
+all_trips_v5$day_of_week <- ordered(all_trips_v5$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+
+
+# Now, let's run the average ride time by each day for members vs casual users
+aggregate(all_trips_v5$ride_length ~ all_trips_v5$member_casual + all_trips_v5$day_of_week, FUN = mean)
+
+
+# analyze ridership data by type and weekday
+all_trips_v5 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>%  #creates weekday field using wday()
+  group_by(member_casual, weekday) %>%  #groups by usertype and weekday
+  summarise(number_of_rides = n()                                                        #calculates the number of rides and average duration 
+  ,average_duration = mean(ride_length)) %>%                 # calculates the average duration
+  arrange(member_casual, weekday)                                                                # sorts
+
+
+# Let's visualize the number of rides by rider type
+all_trips_v5 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = number_of_rides, fill = member_casual)) +
+  geom_col(position = "dodge")
+
+
+# Let's create a visualization for average duration
+all_trips_v5 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = average_duration, fill = member_casual)) +
+  geom_col(position = "dodge")
+
+
+
+```
+
+```{r}
+#mean(round_trips$ride_length)
+
+#mean(all_trips_v5[all_trips_v5$geodist<=0, 'ride_length'])
+
+#mean(filter(all_trips_v5,geodist == 0)$ride_length)
+```
+
+
+```{r}
+
+# Descriptive analysis on ride_length (all figures in seconds)
+mean(filter(all_trips_v5,geodist == 0)$ride_length) #straight average (total ride length / rides)
+median(filter(all_trips_v5,geodist == 0)$ride_length) #midpoint number in the ascending array of ride lengths
+max(filter(all_trips_v5,geodist == 0)$ride_length) #longest ride
+min(filter(all_trips_v5,geodist == 0)$ride_length) #shortest ride
+
+
+# You can condense the four lines above to one line using summary() on the specific attribute
+summary(filter(all_trips_v5,geodist == 0)$ride_length)
+
+
+# Compare members and casual users
+aggregate(filter(all_trips_v5,geodist == 0)$ride_length ~ filter(all_trips_v5,geodist == 0)$member_casual, FUN = mean)
+aggregate(filter(all_trips_v5,geodist == 0)$ride_length ~ filter(all_trips_v5,geodist == 0)$member_casual, FUN = median)
+aggregate(filter(all_trips_v5,geodist == 0)$ride_length ~ filter(all_trips_v5,geodist == 0)$member_casual, FUN = max)
+aggregate(filter(all_trips_v5,geodist == 0)$ride_length ~ filter(all_trips_v5,geodist == 0)$member_casual, FUN = min)
+
+
+# See the average ride time by each day for members vs casual users
+aggregate(filter(all_trips_v5,geodist == 0)$ride_length ~ filter(all_trips_v5,geodist == 0)$member_casual + filter(all_trips_v5,geodist == 0)$day_of_week, FUN = mean)
+
+
+# Notice that the days of the week are out of order. Let's fix that.
+#filter(all_trips_v5,geodist == 0)$day_of_week <- ordered(filter(all_trips_v5,geodist == 0)$day_of_week, levels=c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
+
+
+# Now, let's run the average ride time by each day for members vs casual users
+aggregate(filter(all_trips_v5,geodist == 0)$ride_length ~ filter(all_trips_v5,geodist == 0)$member_casual + filter(all_trips_v5,geodist == 0)$day_of_week, FUN = mean)
+
+
+# analyze ridership data by type and weekday
+filter(all_trips_v5,geodist == 0) %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>%  #creates weekday field using wday()
+  group_by(member_casual, weekday) %>%  #groups by usertype and weekday
+  summarise(number_of_rides = n()                                                        #calculates the number of rides and average duration 
+  ,average_duration = mean(ride_length)) %>%                 # calculates the average duration
+  arrange(member_casual, weekday)                                                                # sorts
+
+
+# Let's visualize the number of rides by rider type
+filter(all_trips_v5,geodist == 0) %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = number_of_rides, fill = member_casual)) +
+  geom_col(position = "dodge")
+
+
+# Let's create a visualization for average duration
+filter(all_trips_v5,geodist == 0) %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = average_duration, fill = member_casual)) +
+  geom_col(position = "dodge")
+```
+```{r}
+short_ride <- (filter(all_trips_v5,ride_length < 86400 & !is.na(geodist)))
+long_ride <- (filter(all_trips_v5,ride_length > 86400 & !is.na(geodist)))
+nadist_ride <- (filter(all_trips_v5,is.na(geodist)))
+
+summary(filter(short_ride)$ride_length)
+summary(filter(long_ride)$ride_length)
+summary(filter(nadist_ride)$ride_length)
+
+
+
+# Let's visualize the number of rides by rider type
+filter(short_ride,geodist == 0) %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = number_of_rides, fill = member_casual)) +
+  geom_col(position = "dodge")
+
+
+# Let's create a visualization for average duration
+filter(short_ride,geodist == 0) %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = average_duration, fill = member_casual)) +
+  geom_col(position = "dodge")
+```
+
+```{r}
+nrow(all_trips_v5[all_trips_v5$member_casual == "casual",])
+nrow(all_trips_v5[all_trips_v5$member_casual == "member",])
+#nrow(all_trips_v5[all_trips_v5$member_casual == "casual" & all_trips_v5$ride_length > 2700,])
+nrow(all_trips_v5[all_trips_v5$member_casual == "casual" & all_trips_v5$ride_length > 2700,]) / nrow(all_trips_v5[all_trips_v5$member_casual == "casual",])
+nrow(all_trips_v5[all_trips_v5$member_casual == "member" & all_trips_v5$ride_length > 2700,]) / nrow(all_trips_v5[all_trips_v5$member_casual == "member",])
+nrow(all_trips_v5[all_trips_v5$member_casual == "casual" & all_trips_v5$ride_length > 10800,]) / nrow(all_trips_v5[all_trips_v5$member_casual == "casual",])
+
+all_trips_v5 %>% 
+  group_by(month, member_casual) %>%
+  summarize(cascount = sum(member_casual == "casual"), memcount = sum(member_casual == "member"))
+
+
+all_trips_v5 %>% 
+  group_by(month, member_casual) %>%
+  summarize(cascount = sum(member_casual == "casual"), memcount = sum(member_casual == "member")) %>%
+  arrange(month,cascount,memcount)  %>% 
+  ggplot(aes(x=month)) + geom_line(aes(y=memcount), color = "darkred")
+
+
+
+
+
+ggplot(all_trips_v5, aes(date, color = member_casual)) + 
+  geom_freqpoly(binwidth=7)
+
+
+all_trips_v5 %>% 
+  filter(day_of_week == "Saturday" | day_of_week == "Sunday") %>%
+ggplot(aes(date, color = member_casual)) + 
+  geom_freqpoly(binwidth=7)
+
+all_trips_v5 %>% 
+  filter(day_of_week != "Saturday" | day_of_week != "Sunday") %>%
+ggplot(aes(date, color = member_casual)) + 
+  geom_freqpoly(binwidth=7)
+
+all_trips_v5 %>% 
+  filter(day_of_week == "Monday") %>%
+ggplot(aes(date, color = member_casual)) + 
+  geom_freqpoly(binwidth=7)
+
+all_trips_v5 %>% 
+  filter(day_of_week == "Tuesday") %>%
+ggplot(aes(date, color = member_casual)) + 
+  geom_freqpoly(binwidth=7)
+
+all_trips_v5 %>% 
+  filter(day_of_week == "Wednesday") %>%
+ggplot(aes(date, color = member_casual)) + 
+  geom_freqpoly(binwidth=7)
+
+all_trips_v5 %>% 
+  filter(day_of_week == "Thursday") %>%
+ggplot(aes(date, color = member_casual)) + 
+  geom_freqpoly(binwidth=7)
+
+all_trips_v5 %>% 
+  filter(day_of_week == "Friday") %>%
+ggplot(aes(date, color = member_casual)) + 
+  geom_freqpoly(binwidth=7)
+
+
+# 2700s > 45 min 10800s > 3 hours
+```
+

@@ -1,0 +1,186 @@
+---
+title: "Processing data sources for analysis"
+author: "Michael-Philipp Stiebing"
+date: "2023-03-01"
+output: 
+  pdf_document: 
+    latex_engine: lualatex
+    keep_tex: yes
+mainfont: Bahnschrift:style=Bold
+monofont: Bahnschrift:style=Condensed
+---
+
+
+```{r setup, include=FALSE }
+knitr::opts_chunk$set(echo = TRUE)
+```
+\fontsize{10}{12}
+\selectfont
+* Start by importing libraries
+
+\fontsize{9}{11}
+\selectfont
+```{r load libraries, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(readr)
+```
+\fontsize{10}{12}
+\selectfont
+* Read the csv files into separate dataframes
+* Combine all dataframes into a single dataframe
+
+\fontsize{9}{11}
+\selectfont
+```{r create dataframe,message=FALSE, warning=FALSE}
+setwd("/home/mikiR/remote_transfer/")
+X202110_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202110-divvy-tripdata.csv")
+X202111_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202111-divvy-tripdata.csv")
+X202112_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202112-divvy-tripdata.csv")
+X202201_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202201-divvy-tripdata.csv")
+X202202_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202202-divvy-tripdata.csv")
+X202203_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202203-divvy-tripdata.csv")
+X202204_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202204-divvy-tripdata.csv")
+X202205_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202205-divvy-tripdata.csv")
+X202206_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202206-divvy-tripdata.csv")
+X202207_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202207-divvy-tripdata.csv")
+X202208_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202208-divvy-tripdata.csv")
+X202209_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202209-divvy-tripdata.csv")
+X202210_divvy_tripdata <- 
+  read_csv("./20221205-capstone_datascience-01/002_data/001_csv/202210-divvy-tripdata.csv")
+
+all_trips <- bind_rows(
+                  X202110_divvy_tripdata, X202111_divvy_tripdata, X202112_divvy_tripdata, X202201_divvy_tripdata,
+                  X202202_divvy_tripdata, X202203_divvy_tripdata, X202204_divvy_tripdata, X202205_divvy_tripdata,
+                  X202206_divvy_tripdata, X202207_divvy_tripdata, X202208_divvy_tripdata, X202209_divvy_tripdata, 
+                  X202210_divvy_tripdata)
+```
+\fontsize{10}{12}
+\selectfont
+
+* Create new columns from date field, split into
+    + month
+    + day
+    + year
+    + day of week
+
+\fontsize{9}{11}
+\selectfont
+```{r}
+all_trips$date <- as.Date(all_trips$started_at)
+all_trips$month <- format(as.Date(all_trips$date), "%m")
+all_trips$day <- format(as.Date(all_trips$date), "%d")
+all_trips$year <- format(as.Date(all_trips$date), "%Y")
+all_trips$day_of_week <- format(as.Date(all_trips$date), "%A")
+```
+\fontsize{10}{12}
+\selectfont
+
+* Create column ridelength calculated from the difference of ended_at and started_at
+* Convert column value into numeric
+
+\fontsize{9}{11}
+\selectfont
+```{r}
+
+all_trips$ride_length <- difftime(all_trips$ended_at,all_trips$started_at)
+all_trips$ride_length <- as.numeric(as.character(all_trips$ride_length))
+```
+\fontsize{10}{12}
+\selectfont
+
+* Remove bad data
+
+\fontsize{9}{11}
+\selectfont
+```{r}
+all_trips_v2 <- all_trips[!(all_trips$ride_length<0),]
+```
+\fontsize{10}{12}
+\selectfont
+
+* Move bad data into a dataframe to doublecheck
+
+\fontsize{9}{11}
+\selectfont
+```{r}
+all_trips_errors <- all_trips[(all_trips$ride_length<0),]
+```
+\fontsize{10}{12}
+\selectfont
+
+*   Trying to calculate the distance between gps coordinates start_lng & start_lat / end_lng & end_lat
+*   Import geosphere library
+
+\fontsize{9}{11}
+\selectfont
+```{r}
+
+library(geosphere) 
+```
+\fontsize{10}{12}
+\selectfont
+
+*   Calculate the distance between the start and end coordinates using the Haversine formula
+*   Create new column geodist with the calculated distance
+
+\fontsize{9}{11}
+\selectfont
+```{r}
+
+all_trips_v3 <- all_trips_v2 %>% 
+              mutate(geodist = distHaversine(
+                    cbind(all_trips_v2$start_lng,all_trips_v2$start_lat), 
+                    cbind(all_trips_v2$end_lng,all_trips_v2$end_lat)))
+```
+\fontsize{10}{12}
+\selectfont
+
+*   Filter all trips with distance = 0 into a dataframe called round_trips, the assumtion being that when the trip ends where it started
+
+\fontsize{9}{11}
+\selectfont
+```{r}
+round_trips = filter(all_trips_v3,geodist == 0)
+```
+\fontsize{10}{12}
+\selectfont
+
+* While working with the data, I noticed some very long rental periods ( > 86400 seconds, aka one day) I think this would be maintainance work, as this would be unlikely to be a rental from a customer
+* Similarly, all entries that have a geodist value of NA - because they dont have a return station value, are similarly out for maintainance, or stolen, or in case of very short rental periods of a few seconds, maybe a booking error or system test
+
+* I filtered these sets into dataframes long_ride and nadist_ride in order to analyze a little bit
+
+\fontsize{9}{11}
+\selectfont
+```{r}
+long_ride <- (filter(all_trips_v3,ride_length > 86400 & !is.na(geodist)))
+nadist_ride <- (filter(all_trips_v3,is.na(geodist)))
+
+summary(filter(long_ride)$ride_length)
+summary(filter(nadist_ride)$ride_length)
+```
+\fontsize{10}{12}
+\selectfont
+
+* Create a new dataframe all_trips_v4 containing only trips under 86400 s & geodist not NA
+
+\fontsize{9}{11}
+\selectfont
+```{r}
+all_trips_v4 <- (filter(all_trips_v3,ride_length < 86400 & !is.na(geodist)))
+```
+

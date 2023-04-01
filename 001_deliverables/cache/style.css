@@ -1,0 +1,24 @@
+.v-center-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.v-center-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(3, 1fr);
+  grid-column-gap: 0px;
+  grid-row-gap: 0px; 
+  align-items: center;
+  justify-items: center;
+}
+.item-a {
+    place-self: center;
+}
+
+#smalltext {
+  font-size: 0.6em;
+  line-height: 1.2em;
+}
