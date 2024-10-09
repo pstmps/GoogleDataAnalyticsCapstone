@@ -1,9 +1,8 @@
 # Cyclistic User Analysis - Case Study
 ### Capstone Project for Google Data Analytics Professional Certificate
-
-<div align="center">
+<br/><br/>
   [**Final Presentation as PDF**](https://github.com/pstmps/GoogleDataAnalyticsCapstone/blob/main/001_deliverables/20230321_SHARE_ACT.pdf)
-</div>
+<br/><br/>
   
 # Using Google’s “Ask, Prepare, Process, Analyze, Share, Act” Framework for Data Analytics
 
